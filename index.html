@@ -438,24 +438,82 @@
       transform: scale(1.25);
     }
 
-    /* ── Characters ── */
+    /* ── Characters (Card Draw) ── */
     .characters-section { background: var(--bg-base); }
-    .char-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 16px;
+    .char-draw {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    .char-grid {
+    .char-draw-area {
+      position: relative;
+      width: 220px;
+      height: 280px;
+      margin-bottom: 24px;
+      perspective: 600px;
+    }
+    .char-card-flip {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+    .char-card-flip.flipped { transform: rotateY(180deg); }
+    .char-card-back, .char-card-front {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--line-base);
+      box-shadow: var(--shadow-floating);
+    }
+    .char-card-back {
+      background: var(--bg-subtle);
+      display: flex;
+      align-items: center;
       justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .char-card-back::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px dashed var(--stitch-color);
+      border-radius: 13px;
+      pointer-events: none;
+    }
+    .char-card-back-icon {
+      font-size: 40px;
+      opacity: 0.4;
+    }
+    .char-card-back-text {
+      font-size: 15px;
+      color: var(--fg-muted);
+    }
+    .char-card-front {
+      transform: rotateY(180deg);
+      background: var(--bg-base);
+    }
+    .char-card-front::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px dashed var(--stitch-color);
+      border-radius: 13px;
+      pointer-events: none;
     }
     .char-card { text-align: center; }
-    .char-card .card-body { padding: 24px 16px 20px; }
+    .char-card .card-body { padding: 36px 16px 10px; }
     .char-avatar {
       width: 80px;
       height: 80px;
       border-radius: 50%;
       overflow: hidden;
-      margin: 0 auto 14px;
+      margin: 0 auto 10px;
       border: 1px dashed var(--stitch-color);
       background: var(--bg-subtle);
     }
@@ -463,6 +521,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: center 20%;
     }
     .char-card h3 {
       font-size: 17px;
@@ -471,12 +530,17 @@
     }
     .char-card .char-role {
       font-size: 13px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .char-card p {
       font-size: 14px;
       color: var(--fg-neutral);
       line-height: 1.55;
+    }
+    .char-counter {
+      font-size: 13px;
+      color: var(--fg-muted);
+      margin-top: 16px;
     }
 
     /* ── Places ── */
@@ -672,119 +736,22 @@
       <h2 class="section-title" data-i18n="char_title">등장인물</h2>
       <p class="section-sub" data-i18n="char_sub">하루의 일상을 함께하는 사람들</p>
     </div>
-    <div class="char-grid">
-      <div class="card char-card">
-        <div class="card-body">
-          <div class="char-avatar"><img src="images/char_haru.png" alt="하루"></div>
-          <h3 data-i18n="cn_haru">하루</h3>
-          <div class="char-role"><span class="badge badge-yellow" data-i18n="cr_hero">주인공</span></div>
-          <p data-i18n="char_haru_desc">망원동에서 자취중. 책과 영화를 좋아해요. 작은 행복 수집이 취미.</p>
+    <div class="char-draw">
+      <div class="char-draw-area" id="charDrawArea">
+        <div class="char-card-flip" id="charFlip">
+          <div class="char-card-back">
+            <div class="char-card-back-icon">?</div>
+            <div class="char-card-back-text" data-i18n="char_draw_hint">눌러서 인물 뽑기</div>
+          </div>
+          <div class="char-card-front" id="charFront">
+            <div class="char-card char-card">
+              <div class="card-body" id="charContent"></div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="card char-card">
-        <div class="card-body">
-          <div class="char-avatar"><img src="images/char_ria.png" alt="리아"></div>
-          <h3 data-i18n="cn_ria">리아</h3>
-          <div class="char-role"><span class="badge badge-yellow" data-i18n="cr_friend">친구</span></div>
-          <p data-i18n="char_ria_desc">아르바이트에서 만난 동갑 친구. 미술 전공이고, 만화책을 모아요.</p>
-        </div>
-      </div>
-      <div class="card char-card">
-        <div class="card-body">
-          <div class="char-avatar"><img src="images/char_yuri.png" alt="유리"></div>
-          <h3 data-i18n="cn_yuri">유리</h3>
-          <div class="char-role"><span class="badge badge-yellow" data-i18n="cr_highfriend">고교 친구</span></div>
-          <p data-i18n="char_yuri_desc">이제 막 직장에 들어간 사회 초년생. 여행과 귀여운 걸 좋아해요.</p>
-        </div>
-      </div>
-      <div class="card char-card">
-        <div class="card-body">
-          <div class="char-avatar"><img src="images/char_mom.png" alt="엄마"></div>
-          <h3 data-i18n="cn_mom">엄마</h3>
-          <div class="char-role"><span class="badge badge-purple" data-i18n="cr_family">가족</span></div>
-          <p data-i18n="char_mom_desc">구례에 거주하며 정원을 가꾸고, 된장찌개를 정말 잘 끓여요.</p>
-        </div>
-      </div>
-      <div class="card char-card">
-        <div class="card-body">
-          <div class="char-avatar"><img src="images/char_dad.png" alt="아빠"></div>
-          <h3 data-i18n="cn_dad">아빠</h3>
-          <div class="char-role"><span class="badge badge-purple" data-i18n="cr_family2">가족</span></div>
-          <p data-i18n="char_dad_desc">구례에서 엄마와 함께 살고 있어요. 과묵하지만 가족들을 잘 챙겨요.</p>
-        </div>
-      </div>
-      <div class="card char-card">
-        <div class="card-body">
-          <div class="char-avatar"><img src="images/char_wooju.png" alt="우주"></div>
-          <h3 data-i18n="cn_wooju">우주</h3>
-          <div class="char-role"><span class="badge badge-purple" data-i18n="cr_brother">남동생</span></div>
-          <p data-i18n="char_wooju_desc">바이올린 레슨 받으러 서울에 올라오는 씩씩한 동생이에요.</p>
-        </div>
-      </div>
-      <div class="card char-card">
-        <div class="card-body">
-          <div class="char-avatar"><img src="images/char_scone.png" alt="스콘 가게 사장님"></div>
-          <h3 data-i18n="cn_scone">스콘 가게 사장님</h3>
-          <div class="char-role"><span class="badge badge-green" data-i18n="cr_neighbor">동네 사람</span></div>
-          <p data-i18n="char_scone_desc">친절하고, 신메뉴 개발에 진심이에요. 해피에게 밥도 챙겨줘요.</p>
-        </div>
-      </div>
-      <div class="card char-card">
-        <div class="card-body">
-          <div class="char-avatar"><img src="images/char_manager.png" alt="점장님"></div>
-          <h3 data-i18n="cn_manager">점장님</h3>
-          <div class="char-role"><span class="badge badge-green" data-i18n="cr_neighbor2">동네 사람</span></div>
-          <p data-i18n="char_manager_desc">마트 점장님. 하루에게 비타민을 선물해 줄 만큼 따뜻해요.</p>
-        </div>
-      </div>
-      <div class="card char-card">
-        <div class="card-body">
-          <div class="char-avatar"><img src="images/char_zenon.png" alt="제논"></div>
-          <h3 data-i18n="cn_zenon">제논</h3>
-          <div class="char-role"><span class="badge badge-green" data-i18n="cr_zenon">스캐터북스 사장님</span></div>
-          <p data-i18n="char_zenon_desc">독립 서점을 운영하며 독서 모임을 이끌어요. 항상 유쾌해요.</p>
-        </div>
-      </div>
-      <div class="card char-card">
-        <div class="card-body">
-          <div class="char-avatar"><img src="images/char_jenny.png" alt="제니"></div>
-          <h3 data-i18n="cn_jenny">제니</h3>
-          <div class="char-role"><span class="badge badge-purple" data-i18n="cr_idol">아이돌</span></div>
-          <p data-i18n="char_jenny_desc">하루의 최애. 보컬, 랩, 춤 다 되는 사기 캐릭터. 글로벌 팬덤 보유.</p>
-        </div>
-      </div>
-      <div class="card char-card">
-        <div class="card-body">
-          <div class="char-avatar"><img src="images/char_band.png" alt="고등어 밴드"></div>
-          <h3 data-i18n="cn_band">고등어 밴드</h3>
-          <div class="char-role"><span class="badge badge-purple" data-i18n="cr_indie">인디 밴드</span></div>
-          <p data-i18n="char_band_desc">리아가 소개해 줘서 하루도 팬이 된 인디 밴드. 주로 홍대에서 공연해요.</p>
-        </div>
-      </div>
-      <div class="card char-card">
-        <div class="card-body">
-          <div class="char-avatar"><img src="images/char_jiho.png" alt="지호"></div>
-          <h3 data-i18n="cn_jiho">지호</h3>
-          <div class="char-role"><span class="badge badge-yellow" data-i18n="cr_new">새로운 인연</span></div>
-          <p data-i18n="char_jiho_desc">하루와 어떤 사이가 될지는 아직 아무도 몰라요.</p>
-        </div>
-      </div>
-      <div class="card char-card">
-        <div class="card-body">
-          <div class="char-avatar"><img src="images/char_happy.png" alt="해피"></div>
-          <h3 data-i18n="cn_happy">해피</h3>
-          <div class="char-role"><span class="badge badge-green" data-i18n="cr_animal">동물친구</span></div>
-          <p data-i18n="char_happy_desc">담벼락에서 만난 노란 고양이. 스콘 가게에선 "치즈"라고 불려요.</p>
-        </div>
-      </div>
-      <div class="card char-card">
-        <div class="card-body">
-          <div class="char-avatar"><img src="images/char_sani.png" alt="산이"></div>
-          <h3 data-i18n="cn_sani">산이</h3>
-          <div class="char-role"><span class="badge badge-green" data-i18n="cr_animal2">동물친구</span></div>
-          <p data-i18n="char_sani_desc">구례 부모님 집에 있는 막내. 가족 모두의 사랑을 받고 있어요.</p>
-        </div>
-      </div>
+      <button class="pill-btn pill-btn-blue" onclick="drawCharacter()" data-i18n="char_draw_btn">인물 뽑기</button>
+      <div class="char-counter" id="charCounter"></div>
     </div>
   </div>
 </section>
@@ -957,7 +924,7 @@
   const dots = document.querySelectorAll('.carousel-dot');
   let currentSlide = 0;
 
-  function goToSlide(i) {
+  window.goToSlide = function(i) {
     const slides = track.querySelectorAll('.episode-slide');
     if (i < 0 || i >= slides.length) return;
     currentSlide = i;
@@ -965,7 +932,7 @@
     dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
   }
 
-  function slideCarousel(dir) {
+  window.slideCarousel = function(dir) {
     const slides = track.querySelectorAll('.episode-slide');
     const next = currentSlide + dir;
     if (next >= 0 && next < slides.length) goToSlide(next);
@@ -1000,6 +967,63 @@
   }, { threshold: 0.5 });
   videos.forEach(v => videoObserver.observe(v));
 
+  // ── Character Draw ──
+  const characters = [
+    { img: 'images/char_haru.png', name: 'cn_haru', nameKo: '하루', role: 'cr_hero', roleKo: '주인공', badgeClass: 'badge-yellow', desc: 'char_haru_desc', descKo: '망원동에서 자취중. 책과 영화를 좋아해요. 작은 행복 수집이 취미.' },
+    { img: 'images/char_ria.png', name: 'cn_ria', nameKo: '리아', role: 'cr_friend', roleKo: '친구', badgeClass: 'badge-yellow', desc: 'char_ria_desc', descKo: '아르바이트에서 만난 동갑 친구. 미술 전공이고, 만화책을 모아요.' },
+    { img: 'images/char_yuri.png', name: 'cn_yuri', nameKo: '유리', role: 'cr_highfriend', roleKo: '고교 친구', badgeClass: 'badge-yellow', desc: 'char_yuri_desc', descKo: '이제 막 직장에 들어간 사회 초년생. 여행과 귀여운 걸 좋아해요.' },
+    { img: 'images/char_mom.png', name: 'cn_mom', nameKo: '엄마', role: 'cr_family', roleKo: '가족', badgeClass: 'badge-purple', desc: 'char_mom_desc', descKo: '구례에 거주하며 정원을 가꾸고, 된장찌개를 정말 잘 끓여요.' },
+    { img: 'images/char_dad.png', name: 'cn_dad', nameKo: '아빠', role: 'cr_family2', roleKo: '가족', badgeClass: 'badge-purple', desc: 'char_dad_desc', descKo: '구례에서 엄마와 함께 살고 있어요. 과묵하지만 가족들을 잘 챙겨요.' },
+    { img: 'images/char_wooju.png', name: 'cn_wooju', nameKo: '우주', role: 'cr_brother', roleKo: '남동생', badgeClass: 'badge-purple', desc: 'char_wooju_desc', descKo: '바이올린 레슨 받으러 서울에 올라오는 씩씩한 동생이에요.' },
+    { img: 'images/char_scone.png', name: 'cn_scone', nameKo: '스콘 가게 사장님', role: 'cr_neighbor', roleKo: '동네 사람', badgeClass: 'badge-green', desc: 'char_scone_desc', descKo: '친절하고, 신메뉴 개발에 진심이에요. 해피에게 밥도 챙겨줘요.' },
+    { img: 'images/char_manager.png', name: 'cn_manager', nameKo: '점장님', role: 'cr_neighbor2', roleKo: '동네 사람', badgeClass: 'badge-green', desc: 'char_manager_desc', descKo: '마트 점장님. 하루에게 비타민을 선물해 줄 만큼 따뜻해요.' },
+    { img: 'images/char_zenon.png', name: 'cn_zenon', nameKo: '제논', role: 'cr_zenon', roleKo: '스캐터북스 사장님', badgeClass: 'badge-green', desc: 'char_zenon_desc', descKo: '독립 서점을 운영하며 독서 모임을 이끌어요. 항상 유쾌해요.' },
+    { img: 'images/char_jenny.png', name: 'cn_jenny', nameKo: '제니', role: 'cr_idol', roleKo: '아이돌', badgeClass: 'badge-purple', desc: 'char_jenny_desc', descKo: '하루의 최애. 보컬, 랩, 춤 다 되는 사기 캐릭터. 글로벌 팬덤 보유.' },
+    { img: 'images/char_band.png', name: 'cn_band', nameKo: '고등어 밴드', role: 'cr_indie', roleKo: '인디 밴드', badgeClass: 'badge-purple', desc: 'char_band_desc', descKo: '리아가 소개해 줘서 하루도 팬이 된 인디 밴드. 주로 홍대에서 공연해요.' },
+    { img: 'images/char_jiho.png', name: 'cn_jiho', nameKo: '?', role: 'cr_new', roleKo: '새로운 인연', badgeClass: 'badge-yellow', desc: 'char_jiho_desc', descKo: '의문의 남자. 하루와 어떤 사이가 될지는 아직 아무도 몰라요.' },
+    { img: 'images/char_happy.png', name: 'cn_happy', nameKo: '해피', role: 'cr_animal', roleKo: '동물친구', badgeClass: 'badge-green', desc: 'char_happy_desc', descKo: '담벼락에서 만난 노란 고양이. 스콘 가게에선 "치즈"라고 불려요.' },
+    { img: 'images/char_sani.png', name: 'cn_sani', nameKo: '산이', role: 'cr_animal2', roleKo: '동물친구', badgeClass: 'badge-green', desc: 'char_sani_desc', descKo: '구례 부모님 집에 있는 막내. 가족 모두의 사랑을 받고 있어요.' }
+  ];
+  let charDrawn = [];
+  let charPool = [];
+
+  function getLangText(key, fallback) {
+    const lang = document.documentElement.lang;
+    if (lang === 'ko' || !i18n[lang]) return fallback;
+    return i18n[lang][key] || fallback;
+  }
+
+  window.drawCharacter = function() {
+    if (charPool.length === 0) {
+      charPool = [...Array(characters.length).keys()];
+      charPool.sort(() => Math.random() - 0.5);
+      charDrawn = [];
+    }
+    const idx = charPool.pop();
+    const c = characters[idx];
+    charDrawn.push(idx);
+
+    const flip = document.getElementById('charFlip');
+    const content = document.getElementById('charContent');
+    const counter = document.getElementById('charCounter');
+
+    // Reset flip
+    flip.classList.remove('flipped');
+
+    setTimeout(() => {
+      const descHtml = getLangText(c.desc, c.descKo);
+      content.innerHTML = `
+        <div class="char-avatar"><img src="${c.img}" alt="${c.nameKo}"></div>
+        <h3>${getLangText(c.name, c.nameKo)}</h3>
+        <div class="char-role"><span class="badge ${c.badgeClass}">${getLangText(c.role, c.roleKo)}</span></div>
+        <p>${descHtml}</p>
+      `;
+      flip.classList.add('flipped');
+    }, flip.classList.contains('flipped') ? 300 : 50);
+
+    counter.textContent = `${charDrawn.length} / ${characters.length}`;
+  }
+
   // ── i18n ──
   const i18n = {
     en: {
@@ -1013,12 +1037,12 @@
       char_mom_desc: "Lives in Gurye, tends her garden, and makes the best doenjang-jjigae.",
       char_dad_desc: "Lives with Mom in Gurye. Quiet but always takes care of the family.",
       char_wooju_desc: "Haru's spirited younger brother who comes to Seoul for violin lessons.",
-      char_scone_desc: "Kind and passionate about developing new menu items. Also feeds Happy.",
+      char_scone_desc: "Kind and passionate about new menu items. Also feeds Happy.",
       char_manager_desc: "The mart manager. Warm enough to gift Haru vitamins.",
       char_zenon_desc: "Runs an independent bookstore and leads a book club. Always cheerful.",
       char_jenny_desc: "Haru's favorite idol. A triple threat — vocals, rap, and dance. Global fandom.",
       char_band_desc: "An indie band Ria introduced to Haru. They mainly perform in Hongdae.",
-      char_jiho_desc: "A new connection. Nobody knows what they'll become to Haru yet.",
+      char_jiho_desc: "A mysterious man. Nobody knows what they'll become to Haru yet.",
       char_happy_desc: 'A yellow cat found on a wall. The scone shop owner calls her "Cheese."',
       char_sani_desc: "The youngest at the family home in Gurye. Loved by everyone.",
       ep_title: "Haru's Episodes", ep_sub: "Little moments of happiness Haru discovered",
@@ -1035,10 +1059,12 @@
       rv3_title: "Obsessed with Haru's fluffy yarn doll art style", rv3_text: "It's not just about recording my daily life — I can feel Haru's vibe too, which I love. I've been writing my diary consistently just to see Haru's episodes lol. It's fun seeing what Haru wears each day! The fonts are beautiful too, giving it just the right aesthetic. Simple but emotional — an app that keeps me coming back! I want more people to know about Haru!",
       rv4_title: "Watching Haru's video every evening has become my end-of-day routine.", rv4_text: "At first I thought it was just a cute character app, but it actually became a real habit. The short videos Haru sends aren't anything grand, and maybe that's why — they make me think 'oh, I had a moment like that today too.' Even on days when I'm too tired to do anything after work, watching one Haru video helps me unwind. Then naturally I start thinking 'what was good about today?' and end up writing at least one line. I never used to keep a diary, but this app makes it feel effortless. The video quality is honestly stunning for an app, and I'm getting more and more attached to Haru.",
       rv1_author: "Plain Yogurt", rv4_author: "Wanna Clock Out",
-      cn_haru: "Haru", cn_ria: "Ria", cn_yuri: "Yuri", cn_mom: "Mom", cn_dad: "Dad", cn_wooju: "Wooju", cn_scone: "Scone Shop Owner", cn_manager: "Store Manager", cn_zenon: "Zenon", cn_jenny: "Jenny", cn_band: "Mackerel Band", cn_jiho: "Jiho", cn_happy: "Happy", cn_sani: "Sani",
+      cn_haru: "Haru", cn_ria: "Ria", cn_yuri: "Yuri", cn_mom: "Mom", cn_dad: "Dad", cn_wooju: "Wooju", cn_scone: "Scone Shop Owner", cn_manager: "Store Manager", cn_zenon: "Zenon", cn_jenny: "Jenny", cn_band: "Mackerel Band", cn_jiho: "?", cn_happy: "Happy", cn_sani: "Sani",
       cr_hero: "Protagonist", cr_friend: "Friend", cr_highfriend: "High School Friend", cr_family: "Family", cr_family2: "Family", cr_brother: "Younger Brother", cr_neighbor: "Neighbor", cr_neighbor2: "Neighbor", cr_zenon: "Scatter Books Owner", cr_idol: "Idol", cr_indie: "Indie Band", cr_new: "New Connection", cr_animal: "Animal Friend", cr_animal2: "Animal Friend",
       footer: "&copy; 2026 Happy Haru &middot; Analog Lab",
-      logo_text: "Happy Haru"
+      logo_text: "Happy Haru",
+      char_draw_hint: "Tap to draw a character",
+      char_draw_btn: "Draw Character"
     },
     ja: {
       nav_characters: 'キャラ', nav_episodes: 'エピソード', nav_download: 'ダウンロード',
@@ -1056,7 +1082,7 @@
       char_zenon_desc: '独立書店を経営し、読書会を主催。いつも陽気。',
       char_jenny_desc: 'ハルの推し。ボーカル、ラップ、ダンス全部できる最強キャラ。グローバルファンダム。',
       char_band_desc: 'リアに紹介されてハルもファンになったインディーバンド。主に弘大で公演。',
-      char_jiho_desc: 'ハルとどんな関係になるかはまだ誰にもわからない。',
+      char_jiho_desc: '謎の男。ハルとどんな関係になるかはまだ誰にもわからない。',
       char_happy_desc: '壁の上で出会った黄色い猫。スコーン屋さんでは「チーズ」と呼ばれています。',
       char_sani_desc: '求礼の実家にいる末っ子。家族みんなに愛されています。',
       ep_title: 'ハルのエピソード', ep_sub: 'ハルが見つけた日常の小さな幸せ',
@@ -1073,14 +1099,16 @@
       rv3_title: 'もこもこ毛糸人形のハルの絵柄が最高', rv3_text: '自分の日常を記録するだけじゃなくて、ハルの雰囲気まで一緒に感じられるのがいい。ハルのエピソード見たくて日記も続けちゃうｗ 毎日違うハルのファッションを見るのも楽しいし可愛い！フォントも綺麗で感性バッチリ。シンプルだけどエモくて、ずっと使い続けちゃうアプリ！もっとたくさんの人に知ってほしい！',
       rv4_title: '毎晩ハルの動画を見るのが一日の締めくくりになりました。', rv4_text: '最初はただの可愛いキャラアプリだと思ってたけど、使ってるうちに本当に習慣になりました。ハルが送ってくれる短い動画は大げさじゃないからこそ、「あ、今日こんなことあったな」って思い出す瞬間が生まれるんですよね。仕事で疲れて何もしたくない日でも、ハルの動画を一つ見ると気持ちがほぐれます。自然と「今日何が良かったかな」って考えて、一行でも書くようになりました。元々日記なんて書かない人間だけど、このアプリは気負わないから続けられます。動画のクオリティもアプリとは思えないほど綺麗で、キャラのハルにどんどん愛着が湧いてきます。',
       rv1_author: 'プレーンヨーグルト', rv4_author: '退勤したい',
-      cn_haru: 'ハル', cn_ria: 'リア', cn_yuri: 'ユリ', cn_mom: 'お母さん', cn_dad: 'お父さん', cn_wooju: 'ウジュ', cn_scone: 'スコーン屋の店主', cn_manager: '店長', cn_zenon: 'ゼノン', cn_jenny: 'ジェニ', cn_band: 'サバ・バンド', cn_jiho: 'ジホ', cn_happy: 'ハッピー', cn_sani: 'サニ',
+      cn_haru: 'ハル', cn_ria: 'リア', cn_yuri: 'ユリ', cn_mom: 'お母さん', cn_dad: 'お父さん', cn_wooju: 'ウジュ', cn_scone: 'スコーン屋の店主', cn_manager: '店長', cn_zenon: 'ゼノン', cn_jenny: 'ジェニ', cn_band: 'サバ・バンド', cn_jiho: '?', cn_happy: 'ハッピー', cn_sani: 'サニ',
       cr_hero: '主人公', cr_friend: '友達', cr_highfriend: '高校の友達', cr_family: '家族', cr_family2: '家族', cr_brother: '弟', cr_neighbor: 'ご近所さん', cr_neighbor2: 'ご近所さん', cr_zenon: 'スキャターブックス店主', cr_idol: 'アイドル', cr_indie: 'インディーバンド', cr_new: '新しい縁', cr_animal: '動物の友達', cr_animal2: '動物の友達',
       footer: '&copy; 2026 幸せなハル &middot; Analog Lab',
-      logo_text: '幸せなハル'
+      logo_text: '幸せなハル',
+      char_draw_hint: 'タップしてキャラを引く',
+      char_draw_btn: 'キャラを引く'
     }
   };
 
-  function switchLang(lang) {
+  window.switchLang = function(lang) {
     document.documentElement.lang = lang;
     if (lang === 'ko') {
       document.querySelectorAll('[data-i18n]').forEach(el => {
