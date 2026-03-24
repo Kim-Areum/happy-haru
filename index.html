@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>행복한 하루</title>
+  <style>
+    /* ── Font: Ownglyph_PDH (앱 메인 폰트) ── */
+    @font-face {
+      font-family: 'Ownglyph_PDH';
+      src: url('fonts/Ownglyph_PDH.ttf') format('truetype');
+      font-weight: normal;
+      font-display: swap;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ── 앱 디자인 토큰 (BaseColor + SemanticColor 기반) ── */
+    :root {
+      /* Greige scale */
+      --greige6: #0C0B08;
+      --greige32: #322E26;
+      --greige40: #433E34;
+      --greige58: #6C6557;
+      --greige62: #7F7767;
+      --greige68: #928A79;
+      --greige74: #A59C8A;
+      --greige82: #C3BAA7;
+      --greige86: #D2CAB9;
+      --greige88: #D6CFBF;
+      --greige90: #DED7C7;
+      --greige92: #E7E0D1;
+      --greige94: #EEE8DB;
+      --greige96: #F4EFE3;
+      --greige98: #FAF6EB;
+      --greige99: #FCF7E8;
+      --greige100: #FFFBF0;
+
+      /* Accent colors */
+      --blue46: #536676;
+      --blue84: #B1C3D7;
+      --blue87: #C0CFDD;
+      --pink86: #DBB9B2;
+      --green75: #A8BFB0;
+      --green89: #C3E3CD;
+      --yellow83: #D4BD7F;
+      --yellow95: #FCF1D3;
+      --yellow97: #F7E0A1;
+      --purple85: #BEABD9;
+      --purple94: #DECEF0;
+
+      /* Semantic tokens */
+      --bg-base: #FFFBF0;
+      --bg-subtlest: #FCF7E8;
+      --bg-subtler: #FAF6EB;
+      --bg-subtle: #F4EFE3;
+      --bg-neutral: #DED7C7;
+      --fg-intense: var(--greige6);
+      --fg-strong: var(--greige32);
+      --fg-neutral: var(--greige58);
+      --fg-subtle: var(--greige68);
+      --fg-muted: var(--greige74);
+      --fg-pale: var(--greige82);
+      --line-base: var(--greige92);
+      --line-subtle: var(--greige94);
+
+      /* Shadow (앱의 rest / floating 그림자) */
+      --shadow-rest: 0 2px 4px rgba(146,138,121,0.25);
+      --shadow-floating: 0 3px 5px rgba(146,138,121,0.35);
+
+      /* Stitch */
+      --stitch-color: var(--greige88);
+
+      --radius: 12px;
+      --radius-lg: 16px;
+    }
+
+    body {
+      font-family: 'Ownglyph_PDH', -apple-system, sans-serif;
+      color: var(--fg-strong);
+      background: var(--bg-base);
+      line-height: 1.75;
+      font-size: 17px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Stitch 유틸 (앱의 dashed border 패턴) ── */
+    .stitch {
+      position: relative;
+    }
+    .stitch::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px dashed var(--stitch-color);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    /* ── Gingham 패턴 (앱의 배경 패턴) ── */
+    .gingham-blue {
+      background-image:
+        linear-gradient(45deg, rgba(177,195,215,0.12) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(177,195,215,0.12) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(177,195,215,0.12) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(177,195,215,0.12) 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+    }
+    .gingham-pink {
+      background-image:
+        linear-gradient(45deg, rgba(219,185,178,0.12) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(219,185,178,0.12) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(219,185,178,0.12) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(219,185,178,0.12) 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+    }
+
+    /* ── Navigation ── */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(255,251,240,0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 100;
+      border-bottom: 1px solid var(--line-subtle);
+    }
+    nav .inner {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      color: var(--fg-strong);
+      text-decoration: none;
+    }
+    nav .logo img {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+    }
+    nav .links { display: flex; gap: 4px; align-items: center; }
+    .lang-select {
+      padding: 4px 8px;
+      border: 1px solid var(--line-base);
+      border-radius: 6px;
+      background: var(--bg-base);
+      color: var(--fg-neutral);
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    nav .links a {
+      text-decoration: none;
+      color: var(--fg-neutral);
+      padding: 6px 12px;
+      font-size: 15px;
+      border-radius: 8px;
+      transition: background 0.2s, color 0.2s;
+    }
+    nav .links a:hover {
+      background: var(--bg-subtle);
+      color: var(--fg-strong);
+    }
+
+    /* ── Section common ── */
+    section { padding: 80px 24px; }
+    .section-inner { max-width: 800px; margin: 0 auto; }
+    .section-label {
+      display: inline-block;
+      font-size: 13px;
+      color: var(--blue46);
+      background: var(--blue87);
+      padding: 4px 9px;
+      border-radius: 3px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .section-label::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px dashed rgba(83,102,118,0.3);
+      border-radius: 1px;
+      pointer-events: none;
+    }
+    .section-title {
+      font-size: 22px;
+      color: var(--fg-intense);
+      margin-bottom: 8px;
+    }
+    .section-sub {
+      color: var(--fg-muted);
+      margin-bottom: 40px;
+      font-size: 16px;
+    }
+    .section-header { text-align: center; }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 24px 80px;
+      background: var(--bg-base);
+    }
+    .hero-icon {
+      width: 100px;
+      height: 100px;
+      border-radius: 24px;
+      overflow: hidden;
+      margin-bottom: 28px;
+      box-shadow: var(--shadow-floating);
+    }
+    .hero-icon img { width: 100%; height: 100%; object-fit: cover; }
+    .hero h1 {
+      font-size: 32px;
+      color: var(--fg-intense);
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+    .hero p {
+      font-size: 17px;
+      color: var(--fg-neutral);
+      max-width: 400px;
+      margin-bottom: 36px;
+      line-height: 1.7;
+    }
+    .hero .buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+    /* ── Pill Button (앱의 PillButton) ── */
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 44px;
+      padding: 0 22px;
+      border-radius: 22px;
+      font-family: inherit;
+      font-size: 16px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      position: relative;
+      box-shadow: var(--shadow-rest);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .pill-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-floating);
+    }
+    .pill-btn::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px dashed rgba(255,255,255,0.5);
+      border-radius: 22px;
+      pointer-events: none;
+    }
+    .pill-btn-blue {
+      background: var(--blue84);
+      color: var(--fg-strong);
+    }
+    .pill-btn-pink {
+      background: var(--pink86);
+      color: var(--fg-strong);
+    }
+    .pill-btn-yellow {
+      background: var(--yellow95);
+      color: var(--fg-strong);
+    }
+    .pill-btn-yellow::after { border-color: rgba(212,189,127,0.4); }
+
+    /* ── Badge (앱의 SquareBadgeButton) ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      height: 28px;
+      padding: 0 9px;
+      border-radius: 3px;
+      font-size: 13px;
+      position: relative;
+      box-shadow: var(--shadow-rest);
+    }
+    .badge::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px dashed;
+      border-radius: 1px;
+      pointer-events: none;
+      opacity: 0.3;
+    }
+    .badge-yellow { background: var(--yellow95); color: var(--fg-strong); }
+    .badge-yellow::after { border-color: var(--yellow83); }
+    .badge-green { background: var(--green89); color: var(--fg-strong); }
+    .badge-green::after { border-color: var(--green75); }
+    .badge-purple { background: var(--purple94); color: var(--fg-strong); }
+    .badge-purple::after { border-color: var(--purple85); }
+
+    /* ── Card (앱의 카드 스타일) ── */
+    .card {
+      background: var(--bg-base);
+      border: 1px solid var(--line-base);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      position: relative;
+      box-shadow: var(--shadow-rest);
+    }
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px dashed var(--stitch-color);
+      border-radius: 13px;
+      pointer-events: none;
+    }
+    .card-body { padding: 20px; }
+
+    /* ── Episodes Carousel ── */
+    .episodes-section { background: var(--bg-subtlest); overflow: hidden; }
+    .carousel-wrapper {
+      position: relative;
+      max-width: 280px;
+      margin: 0 auto;
+    }
+    .carousel-track {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      padding: 4px 0 20px;
+      scrollbar-width: none;
+    }
+    .carousel-track::-webkit-scrollbar { display: none; }
+    .episode-slide {
+      flex: 0 0 100%;
+      scroll-snap-align: center;
+    }
+    .episode-slide .card {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .episode-video {
+      width: 100%;
+      aspect-ratio: 1080 / 1444;
+      background: var(--greige6);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      object-fit: cover;
+      display: block;
+    }
+    .episode-slide .card-body { padding: 18px 20px; }
+    .episode-slide .ep-badge {
+      display: inline-block;
+      font-size: 12px;
+      color: var(--blue46);
+      background: var(--blue87);
+      padding: 2px 8px;
+      border-radius: 3px;
+      margin-bottom: 10px;
+    }
+    .episode-slide h3 {
+      font-size: 17px;
+      margin-bottom: 8px;
+      color: var(--fg-intense);
+    }
+    .episode-slide p {
+      font-size: 15px;
+      color: var(--fg-neutral);
+      line-height: 1.65;
+    }
+    .carousel-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .carousel-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--line-base);
+      background: var(--bg-base);
+      color: var(--fg-neutral);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-rest);
+      transition: transform 0.15s;
+      position: relative;
+    }
+    .carousel-btn:hover { transform: translateY(-1px); }
+    .carousel-btn::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px dashed var(--stitch-color);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .carousel-dots {
+      display: flex;
+      gap: 8px;
+    }
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--greige86);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .carousel-dot.active {
+      background: var(--fg-neutral);
+      transform: scale(1.25);
+    }
+
+    /* ── Characters ── */
+    .characters-section { background: var(--bg-base); }
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+    }
+    .char-grid {
+      justify-content: center;
+    }
+    .char-card { text-align: center; }
+    .char-card .card-body { padding: 24px 16px 20px; }
+    .char-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin: 0 auto 14px;
+      border: 1px dashed var(--stitch-color);
+      background: var(--bg-subtle);
+    }
+    .char-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .char-card h3 {
+      font-size: 17px;
+      margin-bottom: 4px;
+      color: var(--fg-intense);
+    }
+    .char-card .char-role {
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    .char-card p {
+      font-size: 14px;
+      color: var(--fg-neutral);
+      line-height: 1.55;
+    }
+
+    /* ── Places ── */
+    .places-section {
+      background: var(--bg-subtler);
+    }
+    .place-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    .place-tag {
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 14px;
+      border-radius: 15px;
+      font-size: 15px;
+      background: var(--bg-base);
+      border: 1px solid var(--line-base);
+      color: var(--fg-strong);
+      position: relative;
+      box-shadow: var(--shadow-rest);
+    }
+    .place-tag::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px dashed var(--stitch-color);
+      border-radius: 12px;
+      pointer-events: none;
+    }
+
+    /* ── Download ── */
+    .download-section {
+      background: var(--yellow95);
+      text-align: center;
+    }
+    .download-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .download-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-floating);
+    }
+    .download-icon img { width: 100%; height: 100%; object-fit: cover; }
+    .download-section .section-title { margin-bottom: 8px; }
+    .download-section .section-sub { margin-bottom: 28px; }
+    .store-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--fg-intense);
+      color: var(--bg-base);
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      font-size: 15px;
+      box-shadow: var(--shadow-floating);
+      transition: transform 0.15s;
+      position: relative;
+    }
+    .store-btn:hover { transform: translateY(-1px); }
+    .store-btn::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px dashed rgba(255,251,240,0.25);
+      border-radius: 9px;
+      pointer-events: none;
+    }
+    .store-btn svg { width: 20px; height: 20px; fill: var(--bg-base); }
+    .store-btn small { font-size: 11px; opacity: 0.7; display: block; text-align: left; }
+    .store-btn strong { font-size: 16px; display: block; text-align: left; }
+
+    /* ── Reviews ── */
+    .reviews-section { background: var(--bg-base); }
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+    }
+    .review-card .card-body { padding: 24px; }
+    .review-card .review-title {
+      font-size: 17px;
+      color: var(--fg-intense);
+      margin-bottom: 6px;
+    }
+    .review-card .review-stars {
+      color: #F5A623;
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+    .review-card .review-text {
+      font-size: 15px;
+      color: var(--fg-neutral);
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+    .review-card .review-author {
+      font-size: 13px;
+      color: var(--fg-muted);
+      text-align: right;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--bg-subtle);
+      text-align: center;
+      padding: 28px 24px;
+      font-size: 13px;
+      color: var(--fg-muted);
+      border-top: 1px solid var(--line-subtle);
+    }
+
+    /* ── Japanese font size (앱의 Secondary font group 기준) ── */
+    html[lang="ja"] body { font-size: 14px; }
+    html[lang="ja"] .hero h1 { font-size: 28px; }
+    html[lang="ja"] .hero p { font-size: 14px; }
+    html[lang="ja"] .section-title { font-size: 19px; }
+    html[lang="ja"] .section-sub { font-size: 14px; }
+    html[lang="ja"] .char-card p { font-size: 12px; }
+    html[lang="ja"] .episode-slide h3 { font-size: 15px; }
+    html[lang="ja"] .episode-slide p { font-size: 13px; }
+    html[lang="ja"] .review-card .review-title { font-size: 15px; }
+    html[lang="ja"] .review-card .review-text { font-size: 13px; }
+    html[lang="ja"] .pill-btn { font-size: 14px; }
+    html[lang="ja"] .place-tag { font-size: 13px; }
+    html[lang="ja"] nav .logo { font-size: 0.9rem; }
+    html[lang="ja"] nav .links a { font-size: 12px; padding: 6px 8px; }
+    html[lang="ja"] nav .inner { flex-wrap: nowrap; }
+
+    /* ── Mobile ── */
+    @media (max-width: 600px) {
+      body { font-size: 16px; }
+      .hero h1 { font-size: 26px; }
+      .hero p { font-size: 16px; }
+      .section-title { font-size: 20px; }
+      nav .links a { padding: 6px 8px; font-size: 14px; }
+      .char-grid { grid-template-columns: repeat(2, 1fr); }
+      .episode-grid { grid-template-columns: 1fr; }
+      section { padding: 60px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <div class="inner">
+    <a class="logo" href="#home">
+      <img src="images/appicon.png" alt="haru">
+      <span data-i18n="logo_text">행복한 하루</span>
+    </a>
+    <div class="links">
+      <a href="#characters" data-i18n="nav_characters">인물</a>
+      <a href="#episodes" data-i18n="nav_episodes">에피소드</a>
+      <a href="#download" data-i18n="nav_download">다운로드</a>
+      <select class="lang-select" id="langSelect" onchange="switchLang(this.value)">
+        <option value="ko">한국어</option>
+        <option value="en">English</option>
+        <option value="ja">日本語</option>
+      </select>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero gingham-blue" id="home">
+  <div class="hero-icon">
+    <img src="images/appicon.png" alt="행복한 하루 앱 아이콘">
+  </div>
+  <h1 data-i18n="hero_title">행복한 하루</h1>
+  <p data-i18n="hero_sub" data-i18n-html="true">일상 속 작은 행복을 발견하는 하루의 이야기.<br>당신의 하루에도 작은 행복이 있나요?</p>
+  <div class="buttons">
+    <a href="#download" class="pill-btn pill-btn-blue" data-i18n="hero_download">앱 다운로드</a>
+    <a href="#characters" class="pill-btn pill-btn-yellow" data-i18n="hero_characters">인물 소개</a>
+  </div>
+</section>
+
+<!-- Characters -->
+<section class="characters-section" id="characters">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-label">CHARACTERS</span>
+      <h2 class="section-title" data-i18n="char_title">등장인물</h2>
+      <p class="section-sub" data-i18n="char_sub">하루의 일상을 함께하는 사람들</p>
+    </div>
+    <div class="char-grid">
+      <div class="card char-card">
+        <div class="card-body">
+          <div class="char-avatar"><img src="images/char_haru.png" alt="하루"></div>
+          <h3 data-i18n="cn_haru">하루</h3>
+          <div class="char-role"><span class="badge badge-yellow" data-i18n="cr_hero">주인공</span></div>
+          <p data-i18n="char_haru_desc">망원동에서 자취중. 책과 영화를 좋아해요. 작은 행복 수집이 취미.</p>
+        </div>
+      </div>
+      <div class="card char-card">
+        <div class="card-body">
+          <div class="char-avatar"><img src="images/char_ria.png" alt="리아"></div>
+          <h3 data-i18n="cn_ria">리아</h3>
+          <div class="char-role"><span class="badge badge-yellow" data-i18n="cr_friend">친구</span></div>
+          <p data-i18n="char_ria_desc">아르바이트에서 만난 동갑 친구. 미술 전공이고, 만화책을 모아요.</p>
+        </div>
+      </div>
+      <div class="card char-card">
+        <div class="card-body">
+          <div class="char-avatar"><img src="images/char_yuri.png" alt="유리"></div>
+          <h3 data-i18n="cn_yuri">유리</h3>
+          <div class="char-role"><span class="badge badge-yellow" data-i18n="cr_highfriend">고교 친구</span></div>
+          <p data-i18n="char_yuri_desc">이제 막 직장에 들어간 사회 초년생. 여행과 귀여운 걸 좋아해요.</p>
+        </div>
+      </div>
+      <div class="card char-card">
+        <div class="card-body">
+          <div class="char-avatar"><img src="images/char_mom.png" alt="엄마"></div>
+          <h3 data-i18n="cn_mom">엄마</h3>
+          <div class="char-role"><span class="badge badge-purple" data-i18n="cr_family">가족</span></div>
+          <p data-i18n="char_mom_desc">구례에 거주하며 정원을 가꾸고, 된장찌개를 정말 잘 끓여요.</p>
+        </div>
+      </div>
+      <div class="card char-card">
+        <div class="card-body">
+          <div class="char-avatar"><img src="images/char_dad.png" alt="아빠"></div>
+          <h3 data-i18n="cn_dad">아빠</h3>
+          <div class="char-role"><span class="badge badge-purple" data-i18n="cr_family2">가족</span></div>
+          <p data-i18n="char_dad_desc">구례에서 엄마와 함께 살고 있어요. 과묵하지만 가족들을 잘 챙겨요.</p>
+        </div>
+      </div>
+      <div class="card char-card">
+        <div class="card-body">
+          <div class="char-avatar"><img src="images/char_wooju.png" alt="우주"></div>
+          <h3 data-i18n="cn_wooju">우주</h3>
+          <div class="char-role"><span class="badge badge-purple" data-i18n="cr_brother">남동생</span></div>
+          <p data-i18n="char_wooju_desc">바이올린 레슨 받으러 서울에 올라오는 씩씩한 동생이에요.</p>
+        </div>
+      </div>
+      <div class="card char-card">
+        <div class="card-body">
+          <div class="char-avatar"><img src="images/char_scone.png" alt="스콘 가게 사장님"></div>
+          <h3 data-i18n="cn_scone">스콘 가게 사장님</h3>
+          <div class="char-role"><span class="badge badge-green" data-i18n="cr_neighbor">동네 사람</span></div>
+          <p data-i18n="char_scone_desc">친절하고, 신메뉴 개발에 진심이에요. 해피에게 밥도 챙겨줘요.</p>
+        </div>
+      </div>
+      <div class="card char-card">
+        <div class="card-body">
+          <div class="char-avatar"><img src="images/char_manager.png" alt="점장님"></div>
+          <h3 data-i18n="cn_manager">점장님</h3>
+          <div class="char-role"><span class="badge badge-green" data-i18n="cr_neighbor2">동네 사람</span></div>
+          <p data-i18n="char_manager_desc">마트 점장님. 하루에게 비타민을 선물해 줄 만큼 따뜻해요.</p>
+        </div>
+      </div>
+      <div class="card char-card">
+        <div class="card-body">
+          <div class="char-avatar"><img src="images/char_zenon.png" alt="제논"></div>
+          <h3 data-i18n="cn_zenon">제논</h3>
+          <div class="char-role"><span class="badge badge-green" data-i18n="cr_zenon">스캐터북스 사장님</span></div>
+          <p data-i18n="char_zenon_desc">독립 서점을 운영하며 독서 모임을 이끌어요. 항상 유쾌해요.</p>
+        </div>
+      </div>
+      <div class="card char-card">
+        <div class="card-body">
+          <div class="char-avatar"><img src="images/char_jenny.png" alt="제니"></div>
+          <h3 data-i18n="cn_jenny">제니</h3>
+          <div class="char-role"><span class="badge badge-purple" data-i18n="cr_idol">아이돌</span></div>
+          <p data-i18n="char_jenny_desc">하루의 최애. 보컬, 랩, 춤 다 되는 사기 캐릭터. 글로벌 팬덤 보유.</p>
+        </div>
+      </div>
+      <div class="card char-card">
+        <div class="card-body">
+          <div class="char-avatar"><img src="images/char_band.png" alt="고등어 밴드"></div>
+          <h3 data-i18n="cn_band">고등어 밴드</h3>
+          <div class="char-role"><span class="badge badge-purple" data-i18n="cr_indie">인디 밴드</span></div>
+          <p data-i18n="char_band_desc">리아가 소개해 줘서 하루도 팬이 된 인디 밴드. 주로 홍대에서 공연해요.</p>
+        </div>
+      </div>
+      <div class="card char-card">
+        <div class="card-body">
+          <div class="char-avatar"><img src="images/char_jiho.png" alt="지호"></div>
+          <h3 data-i18n="cn_jiho">지호</h3>
+          <div class="char-role"><span class="badge badge-yellow" data-i18n="cr_new">새로운 인연</span></div>
+          <p data-i18n="char_jiho_desc">하루와 어떤 사이가 될지는 아직 아무도 몰라요.</p>
+        </div>
+      </div>
+      <div class="card char-card">
+        <div class="card-body">
+          <div class="char-avatar"><img src="images/char_happy.png" alt="해피"></div>
+          <h3 data-i18n="cn_happy">해피</h3>
+          <div class="char-role"><span class="badge badge-green" data-i18n="cr_animal">동물친구</span></div>
+          <p data-i18n="char_happy_desc">담벼락에서 만난 노란 고양이. 스콘 가게에선 "치즈"라고 불려요.</p>
+        </div>
+      </div>
+      <div class="card char-card">
+        <div class="card-body">
+          <div class="char-avatar"><img src="images/char_sani.png" alt="산이"></div>
+          <h3 data-i18n="cn_sani">산이</h3>
+          <div class="char-role"><span class="badge badge-green" data-i18n="cr_animal2">동물친구</span></div>
+          <p data-i18n="char_sani_desc">구례 부모님 집에 있는 막내. 가족 모두의 사랑을 받고 있어요.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Episodes -->
+<section class="episodes-section" id="episodes">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-label">EPISODES</span>
+      <h2 class="section-title" data-i18n="ep_title">하루의 에피소드</h2>
+      <p class="section-sub" data-i18n="ep_sub">하루가 발견한 일상 속 작은 행복들</p>
+    </div>
+    <div class="carousel-wrapper">
+      <div class="carousel-track" id="carouselTrack">
+        <div class="episode-slide">
+          <div class="card">
+            <video class="episode-video" src="videos/01_BlueSky.mp4" muted playsinline loop></video>
+            <div class="card-body">
+              <span class="ep-badge">EP.01</span>
+              <h3 data-i18n="ep1_title">출근길 파란 하늘</h3>
+              <p data-i18n="ep1_desc">긴장되는 첫 아르바이트 출근길. 신호를 기다리다 무심코 하늘을 봤어. 맑고 파란 하늘을 보니 긴장이 조금 풀리는 것 같았어.</p>
+            </div>
+          </div>
+        </div>
+        <div class="episode-slide">
+          <div class="card">
+            <video class="episode-video" src="videos/04_YellowCatHappy.mp4" muted playsinline loop></video>
+            <div class="card-body">
+              <span class="ep-badge">EP.04</span>
+              <h3 data-i18n="ep4_title">노란 고양이 해피</h3>
+              <p data-i18n="ep4_desc">아침에 달리러 나갔다가 담벼락에서 졸고 있는 노란 고양이를 발견했어. 너무 귀여워서 해피라고 이름을 지어줬어.</p>
+            </div>
+          </div>
+        </div>
+        <div class="episode-slide">
+          <div class="card">
+            <video class="episode-video" src="videos/09_EndlessVideo.mp4" muted playsinline loop></video>
+            <div class="card-body">
+              <span class="ep-badge">EP.09</span>
+              <h3 data-i18n="ep9_title">영상이 끝나지 않아</h3>
+              <p data-i18n="ep9_desc">늦은 밤까지 최애 무대 영상을 돌려보다가 잠들었어. 의상도 연출도 레전드였고, 라이브는 진짜 왜 이렇게 잘해...</p>
+            </div>
+          </div>
+        </div>
+        <div class="episode-slide">
+          <div class="card">
+            <video class="episode-video" src="videos/42_SpringBus.mp4" muted playsinline loop></video>
+            <div class="card-body">
+              <span class="ep-badge">EP.42</span>
+              <h3 data-i18n="ep42_title">봄날의 버스</h3>
+              <p data-i18n="ep42_desc">버스 타고 친구 만나러 가는 길. 화창한 날씨에 바람도 시원하게 불고, 좋아하는 음악을 듣고 있으니 기분이 좋았어.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-nav">
+        <button class="carousel-btn" onclick="slideCarousel(-1)" aria-label="이전">&#x2039;</button>
+        <div class="carousel-dots">
+          <button class="carousel-dot active" onclick="goToSlide(0)"></button>
+          <button class="carousel-dot" onclick="goToSlide(1)"></button>
+          <button class="carousel-dot" onclick="goToSlide(2)"></button>
+          <button class="carousel-dot" onclick="goToSlide(3)"></button>
+        </div>
+        <button class="carousel-btn" onclick="slideCarousel(1)" aria-label="다음">&#x203A;</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Places -->
+<section class="places-section">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-label">PLACES</span>
+      <h2 class="section-title" data-i18n="place_title">하루의 동네</h2>
+      <p class="section-sub" data-i18n="place_sub">하루가 매일 오가는 따뜻한 장소들</p>
+    </div>
+    <div class="place-tags">
+      <span class="place-tag" data-i18n="pl_mart">마트</span>
+      <span class="place-tag" data-i18n="pl_scone">스콘 가게</span>
+      <span class="place-tag" data-i18n="pl_scatter">스캐터북스</span>
+      <span class="place-tag" data-i18n="pl_library">동네 도서관</span>
+      <span class="place-tag" data-i18n="pl_studio">리아의 작업실</span>
+      <span class="place-tag" data-i18n="pl_flower">동네 꽃가게</span>
+      <span class="place-tag" data-i18n="pl_gurye">구례 시골집</span>
+    </div>
+  </div>
+</section>
+
+<!-- Reviews -->
+<section class="reviews-section">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-label">REVIEWS</span>
+      <h2 class="section-title" data-i18n="review_title">사용자 리뷰</h2>
+      <p class="section-sub" data-i18n="review_sub">행복한 하루를 함께하는 분들의 이야기</p>
+    </div>
+    <div class="review-grid">
+      <div class="card review-card">
+        <div class="card-body">
+          <div class="review-title" data-i18n="rv1_title">따뜻한 감성이 느껴지는 앱</div>
+          <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text" data-i18n="rv1_text">하루 에피소드 넘 귀엽고 따뜻해요 중간 중간 ASMR 같은 사운드도 넘 좋아요. 매일 새로운 이야기가 뜨니까 기다려지구...하루따라 저도 꾸준히 일기쓰게 되네여 하루가 제 일기보고 얘기해주는것두 넘 신기</p>
+          <div class="review-author" data-i18n="rv1_author">플레인요거트</div>
+        </div>
+      </div>
+      <div class="card review-card">
+        <div class="card-body">
+          <div class="review-title" data-i18n="rv2_title">동네에서 마주친 것만 같은</div>
+          <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text" data-i18n="rv2_text">제가 같은 동네 살거등요ㅎㅎ 그래서 친근감 있어서인지 알람 오면 바로 들여다보게 되는것 같아욤~보다보면 나도 뭔가를 남기고 싶어지고 말이죠! 잘 쓰고 있습니다!</p>
+          <div class="review-author">maruafzma</div>
+        </div>
+      </div>
+      <div class="card review-card">
+        <div class="card-body">
+          <div class="review-title" data-i18n="rv3_title">몽글몽글한 털실 인형 하루 그림체 취저</div>
+          <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text" data-i18n="rv3_text">내 일상만 기록하는 게 아니라 하루의 분위기까지 같이 느낄 수 있어서 좋아요&#x1F91E;&#x1F3FB; 그래서 하루 에피소드 보려고 일기도 꾸준히 쓰게 되는 것 같아요 ㅋㅋ 오늘 뭐 입었는지 매일 다른 하루의 패션 보는 재미도 있고 귀여워요! 일기 쓸 때 글씨체도 예뻐서 감성 제대로라 더 좋음. 다꾸 잘 못하는데 여기다 쓰면 알아서 예쁘게 꾸며지는 느낌이라 좋아요. 심플한데 감성 있어서 계속 쓰게 되는 앱! 한 달 채우면 캡처해서 스토리에 자랑하려고요 ㅋㅋ 하루 더 많은 사람들이 알았으면 좋겠어요!</p>
+          <div class="review-author">Dalki55</div>
+        </div>
+      </div>
+      <div class="card review-card">
+        <div class="card-body">
+          <div class="review-title" data-i18n="rv4_title">매일 저녁 하루 영상 보는 게 제 하루 마무리 루틴이 됐습니다.</div>
+          <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text" data-i18n="rv4_text">처음엔 그냥 예쁜 캐릭터 앱이겠거니 했는데, 쓰다 보니까 진짜 습관이 됐어요. 매일 하루가 보내주는 짧은 영상이 뭔가 거창한 게 아니라 그런가 그걸 보면 "아 나도 오늘 이런 거 있었는데" 하고 떠오르는 순간이 생기더라고요. 퇴근하고 지쳐서 아무것도 하기 싫은 날에도 하루 영상 하나 보고 나면 마음이 좀 풀려요. 그리고 자연스럽게 오늘 뭐가 좋았지? 하고 생각하게 되고, 한 줄이라도 적게 돼요. 원래 일기 같은 거 안 쓰는 사람인데, 이 앱에서는 부담이 없어서 계속 쓰게 됩니다. 영상 퀄리티도 솔직히 앱 치고 놀라울 정도로 예쁘고, 캐릭터 하루가 점점 정이 들어요.</p>
+          <div class="review-author" data-i18n="rv4_author">퇴근을 원해</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Download -->
+<section class="download-section gingham-pink" id="download">
+  <div class="section-inner download-inner">
+    <div class="download-icon">
+      <img src="images/appicon.png" alt="haru">
+    </div>
+    <h2 class="section-title" data-i18n="dl_title">앱에서 만나보세요</h2>
+    <p class="section-sub" data-i18n="dl_sub">하루의 행복한 에피소드를 앱에서 직접 경험해 보세요</p>
+    <a href="https://apps.apple.com/kr/app/happy-haru-%ED%96%89%EB%B3%B5%ED%95%9C-%ED%95%98%EB%A3%A8/id6760535908" class="store-btn" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      <span>
+        <small>Download on the</small>
+        <strong>App Store</strong>
+      </span>
+    </a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <span data-i18n="footer" data-i18n-html="true">&copy; 2026 행복한 하루 &middot; Analog Lab</span>
+</footer>
+
+<script>
+  // Smooth scroll for nav links
+  document.querySelectorAll('nav a[href^="#"], a.logo[href^="#"]').forEach(a => {
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  // ── Carousel ──
+  const track = document.getElementById('carouselTrack');
+  const dots = document.querySelectorAll('.carousel-dot');
+  let currentSlide = 0;
+
+  function goToSlide(i) {
+    const slides = track.querySelectorAll('.episode-slide');
+    if (i < 0 || i >= slides.length) return;
+    currentSlide = i;
+    slides[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+  }
+
+  function slideCarousel(dir) {
+    const slides = track.querySelectorAll('.episode-slide');
+    const next = currentSlide + dir;
+    if (next >= 0 && next < slides.length) goToSlide(next);
+  }
+
+  // Update dots on manual scroll
+  track.addEventListener('scrollend', () => {
+    const slides = track.querySelectorAll('.episode-slide');
+    const trackRect = track.getBoundingClientRect();
+    const center = trackRect.left + trackRect.width / 2;
+    let closest = 0;
+    let minDist = Infinity;
+    slides.forEach((s, i) => {
+      const r = s.getBoundingClientRect();
+      const dist = Math.abs(r.left + r.width / 2 - center);
+      if (dist < minDist) { minDist = dist; closest = i; }
+    });
+    currentSlide = closest;
+    dots.forEach((d, i) => d.classList.toggle('active', i === closest));
+  });
+
+  // Auto-play videos when visible
+  const videos = document.querySelectorAll('.episode-video');
+  const videoObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.play().catch(() => {});
+      } else {
+        entry.target.pause();
+      }
+    });
+  }, { threshold: 0.5 });
+  videos.forEach(v => videoObserver.observe(v));
+
+  // ── i18n ──
+  const i18n = {
+    en: {
+      nav_characters: 'Characters', nav_episodes: 'Episodes', nav_download: 'Download',
+      hero_title: 'Happy Haru', hero_sub: "Haru's story of finding little happiness in everyday life.<br>Do you have small joys in your day too?",
+      hero_download: 'Download App', hero_characters: 'Characters',
+      char_title: 'Characters', char_sub: "The people who share Haru's daily life",
+      char_haru_desc: "Lives alone in Mangwon-dong. Loves books and movies. Collecting small happiness is her hobby.",
+      char_ria_desc: "A same-age friend from her part-time job. Art major who collects manga.",
+      char_yuri_desc: "A new employee just starting her career. Loves travel and cute things.",
+      char_mom_desc: "Lives in Gurye, tends her garden, and makes the best doenjang-jjigae.",
+      char_dad_desc: "Lives with Mom in Gurye. Quiet but always takes care of the family.",
+      char_wooju_desc: "Haru's spirited younger brother who comes to Seoul for violin lessons.",
+      char_scone_desc: "Kind and passionate about developing new menu items. Also feeds Happy.",
+      char_manager_desc: "The mart manager. Warm enough to gift Haru vitamins.",
+      char_zenon_desc: "Runs an independent bookstore and leads a book club. Always cheerful.",
+      char_jenny_desc: "Haru's favorite idol. A triple threat — vocals, rap, and dance. Global fandom.",
+      char_band_desc: "An indie band Ria introduced to Haru. They mainly perform in Hongdae.",
+      char_jiho_desc: "A new connection. Nobody knows what they'll become to Haru yet.",
+      char_happy_desc: 'A yellow cat found on a wall. The scone shop owner calls her "Cheese."',
+      char_sani_desc: "The youngest at the family home in Gurye. Loved by everyone.",
+      ep_title: "Haru's Episodes", ep_sub: "Little moments of happiness Haru discovered",
+      ep1_title: "Blue Sky on the Way to Work", ep1_desc: "On my nerve-wracking first day at my part-time job, I looked up at the sky while waiting at a traffic light. The clear blue sky made me feel a little more at ease.",
+      ep4_title: "Happy the Yellow Cat", ep4_desc: "I went out for a morning run and found a yellow cat dozing on a wall. It was so cute that I named it Happy.",
+      ep9_title: "The Video Won't End", ep9_desc: "I stayed up late rewatching my favorite idol's stage video and fell asleep. The outfits, the staging — all legendary. And the live vocals... just wow.",
+      ep42_title: "Spring Bus", ep42_desc: "On the bus to meet a friend. The weather was beautiful with a cool breeze, and listening to my favorite music just made everything feel right.",
+      place_title: "Haru's Neighborhood", place_sub: "Warm places Haru visits every day",
+      pl_mart: "Mart", pl_scone: "Scone Shop", pl_scatter: "Scatter Books", pl_library: "Library", pl_studio: "Ria's Studio", pl_flower: "Flower Shop", pl_gurye: "Gurye Country Home",
+      review_title: "User Reviews", review_sub: "Stories from people who share Happy Haru",
+      dl_title: "Try it on the App", dl_sub: "Experience Haru's happy episodes directly in the app",
+      rv1_title: "An app that feels warm", rv1_text: "Haru's episodes are so cute and warm. The ASMR-like sounds in between are great too. I look forward to new stories every day... I've even started keeping a diary like Haru. It's so cool that Haru reads my diary and talks about it!",
+      rv2_title: "Like bumping into someone in the neighborhood", rv2_text: "I live in the same neighborhood lol, so it feels really familiar. When I get a notification, I check it right away. The more I use it, the more I want to leave something too! Love using it!",
+      rv3_title: "Obsessed with Haru's fluffy yarn doll art style", rv3_text: "It's not just about recording my daily life — I can feel Haru's vibe too, which I love. I've been writing my diary consistently just to see Haru's episodes lol. It's fun seeing what Haru wears each day! The fonts are beautiful too, giving it just the right aesthetic. Simple but emotional — an app that keeps me coming back! I want more people to know about Haru!",
+      rv4_title: "Watching Haru's video every evening has become my end-of-day routine.", rv4_text: "At first I thought it was just a cute character app, but it actually became a real habit. The short videos Haru sends aren't anything grand, and maybe that's why — they make me think 'oh, I had a moment like that today too.' Even on days when I'm too tired to do anything after work, watching one Haru video helps me unwind. Then naturally I start thinking 'what was good about today?' and end up writing at least one line. I never used to keep a diary, but this app makes it feel effortless. The video quality is honestly stunning for an app, and I'm getting more and more attached to Haru.",
+      rv1_author: "Plain Yogurt", rv4_author: "Wanna Clock Out",
+      cn_haru: "Haru", cn_ria: "Ria", cn_yuri: "Yuri", cn_mom: "Mom", cn_dad: "Dad", cn_wooju: "Wooju", cn_scone: "Scone Shop Owner", cn_manager: "Store Manager", cn_zenon: "Zenon", cn_jenny: "Jenny", cn_band: "Mackerel Band", cn_jiho: "Jiho", cn_happy: "Happy", cn_sani: "Sani",
+      cr_hero: "Protagonist", cr_friend: "Friend", cr_highfriend: "High School Friend", cr_family: "Family", cr_family2: "Family", cr_brother: "Younger Brother", cr_neighbor: "Neighbor", cr_neighbor2: "Neighbor", cr_zenon: "Scatter Books Owner", cr_idol: "Idol", cr_indie: "Indie Band", cr_new: "New Connection", cr_animal: "Animal Friend", cr_animal2: "Animal Friend",
+      footer: "&copy; 2026 Happy Haru &middot; Analog Lab",
+      logo_text: "Happy Haru"
+    },
+    ja: {
+      nav_characters: 'キャラ', nav_episodes: 'エピソード', nav_download: 'ダウンロード',
+      hero_title: '幸せなハル', hero_sub: '日常の中の小さな幸せを見つけるハルの物語。<br>あなたの一日にも小さな幸せはありますか？',
+      hero_download: 'アプリをダウンロード', hero_characters: 'キャラクター紹介',
+      char_title: '登場人物', char_sub: 'ハルの日常を一緒に過ごす人たち',
+      char_haru_desc: '望遠洞で一人暮らし中。本と映画が好き。小さな幸せを集めるのが趣味。',
+      char_ria_desc: 'バイト先で出会った同い年の友達。美術専攻で、漫画を集めています。',
+      char_yuri_desc: '社会人になったばかりの新人。旅行とかわいいものが好き。',
+      char_mom_desc: '求礼に住んでいて、庭の手入れをし、テンジャンチゲがとても上手。',
+      char_dad_desc: '求礼でお母さんと一緒に暮らしています。寡黙だけど家族思い。',
+      char_wooju_desc: 'バイオリンのレッスンのためにソウルに来る元気な弟。',
+      char_scone_desc: '親切で、新メニュー開発に情熱的。ハッピーにもご飯をあげています。',
+      char_manager_desc: 'マートの店長。ハルにビタミンをプレゼントするほど温かい人。',
+      char_zenon_desc: '独立書店を経営し、読書会を主催。いつも陽気。',
+      char_jenny_desc: 'ハルの推し。ボーカル、ラップ、ダンス全部できる最強キャラ。グローバルファンダム。',
+      char_band_desc: 'リアに紹介されてハルもファンになったインディーバンド。主に弘大で公演。',
+      char_jiho_desc: 'ハルとどんな関係になるかはまだ誰にもわからない。',
+      char_happy_desc: '壁の上で出会った黄色い猫。スコーン屋さんでは「チーズ」と呼ばれています。',
+      char_sani_desc: '求礼の実家にいる末っ子。家族みんなに愛されています。',
+      ep_title: 'ハルのエピソード', ep_sub: 'ハルが見つけた日常の小さな幸せ',
+      ep1_title: '通勤路の青い空', ep1_desc: '緊張する初バイトの出勤日。信号待ちでふと空を見上げた。澄んだ青い空を見たら、少し緊張がほぐれた気がした。',
+      ep4_title: '黄色い猫ハッピー', ep4_desc: '朝ランニングに出かけたら、塀の上で居眠りしている黄色い猫を見つけた。あまりにかわいくて、ハッピーと名付けた。',
+      ep9_title: '動画が終わらない', ep9_desc: '夜遅くまで推しのステージ映像をリピートして寝落ちした。衣装も演出もレジェンド、ライブはなんでこんなに上手いの…',
+      ep42_title: '春のバス', ep42_desc: '友達に会いに行くバスの中。天気が良くて風も心地よく、好きな音楽を聴いていたら気分が良くなった。',
+      place_title: 'ハルの街', place_sub: 'ハルが毎日通う温かい場所たち',
+      pl_mart: 'マート', pl_scone: 'スコーン屋', pl_scatter: 'スキャターブックス', pl_library: '図書館', pl_studio: 'リアのアトリエ', pl_flower: '花屋', pl_gurye: '求礼の実家',
+      review_title: 'ユーザーレビュー', review_sub: '幸せなハルを一緒に楽しむ方々の声',
+      dl_title: 'アプリで会いましょう', dl_sub: 'ハルの幸せなエピソードをアプリで直接体験してください',
+      rv1_title: '温かい感性が伝わるアプリ', rv1_text: 'ハルのエピソード、めちゃくちゃ可愛くて温かいです。途中のASMRみたいなサウンドもすごくいい。毎日新しい話が出るから楽しみで…ハルに影響されて私も日記を書くようになりました。ハルが私の日記を読んでコメントしてくれるのも不思議！',
+      rv2_title: 'まるでご近所さんに会ったみたい', rv2_text: '私も同じ街に住んでるんですよねｗ だから親近感があって、通知が来るとすぐ見ちゃいます。見てるうちに自分も何か残したくなるんですよね！愛用してます！',
+      rv3_title: 'もこもこ毛糸人形のハルの絵柄が最高', rv3_text: '自分の日常を記録するだけじゃなくて、ハルの雰囲気まで一緒に感じられるのがいい。ハルのエピソード見たくて日記も続けちゃうｗ 毎日違うハルのファッションを見るのも楽しいし可愛い！フォントも綺麗で感性バッチリ。シンプルだけどエモくて、ずっと使い続けちゃうアプリ！もっとたくさんの人に知ってほしい！',
+      rv4_title: '毎晩ハルの動画を見るのが一日の締めくくりになりました。', rv4_text: '最初はただの可愛いキャラアプリだと思ってたけど、使ってるうちに本当に習慣になりました。ハルが送ってくれる短い動画は大げさじゃないからこそ、「あ、今日こんなことあったな」って思い出す瞬間が生まれるんですよね。仕事で疲れて何もしたくない日でも、ハルの動画を一つ見ると気持ちがほぐれます。自然と「今日何が良かったかな」って考えて、一行でも書くようになりました。元々日記なんて書かない人間だけど、このアプリは気負わないから続けられます。動画のクオリティもアプリとは思えないほど綺麗で、キャラのハルにどんどん愛着が湧いてきます。',
+      rv1_author: 'プレーンヨーグルト', rv4_author: '退勤したい',
+      cn_haru: 'ハル', cn_ria: 'リア', cn_yuri: 'ユリ', cn_mom: 'お母さん', cn_dad: 'お父さん', cn_wooju: 'ウジュ', cn_scone: 'スコーン屋の店主', cn_manager: '店長', cn_zenon: 'ゼノン', cn_jenny: 'ジェニ', cn_band: 'サバ・バンド', cn_jiho: 'ジホ', cn_happy: 'ハッピー', cn_sani: 'サニ',
+      cr_hero: '主人公', cr_friend: '友達', cr_highfriend: '高校の友達', cr_family: '家族', cr_family2: '家族', cr_brother: '弟', cr_neighbor: 'ご近所さん', cr_neighbor2: 'ご近所さん', cr_zenon: 'スキャターブックス店主', cr_idol: 'アイドル', cr_indie: 'インディーバンド', cr_new: '新しい縁', cr_animal: '動物の友達', cr_animal2: '動物の友達',
+      footer: '&copy; 2026 幸せなハル &middot; Analog Lab',
+      logo_text: '幸せなハル'
+    }
+  };
+
+  function switchLang(lang) {
+    document.documentElement.lang = lang;
+    if (lang === 'ko') {
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        if (el._origText !== undefined) {
+          if (el.getAttribute('data-i18n-html')) el.innerHTML = el._origHtml;
+          else el.textContent = el._origText;
+        }
+      });
+      return;
+    }
+    const dict = i18n[lang];
+    if (!dict) return;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (el._origText === undefined) {
+        el._origText = el.textContent;
+        el._origHtml = el.innerHTML;
+      }
+      if (dict[key]) {
+        if (el.getAttribute('data-i18n-html')) el.innerHTML = dict[key];
+        else el.textContent = dict[key];
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
