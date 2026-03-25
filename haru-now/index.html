@@ -326,7 +326,7 @@
     <div class="mini-board-label">요즘 나를 행복하게 한 작은 순간은?</div>
     <div class="mini-board-input" style="margin-bottom:6px;">
       <input type="text" id="boardNick" placeholder="닉네임" maxlength="10" style="flex:0 0 50px; min-width:0;">
-      <input type="text" id="boardInput" placeholder="퇴근 후 아이스크림 한 입" maxlength="40" onkeydown="if(event.key==='Enter')postBoard()">
+      <input type="text" id="boardInput" placeholder="퇴근 후 아이스크림 한 입" maxlength="25" onkeydown="if(event.key==='Enter')postBoard()">
       <button onclick="postBoard()">올리기</button>
     </div>
     <div class="mini-board-list" id="boardList"></div>
@@ -508,9 +508,10 @@
     const nick = nickInput.value.trim();
     if (!text) return;
     const newRef = boardRef.push();
-    newRef.set({ text, nick, date: new Date().toISOString() });
+    const postData = { text, nick, date: new Date().toISOString() };
     myPostIds.push(newRef.key);
     localStorage.setItem('haru_my_posts', JSON.stringify(myPostIds));
+    newRef.set(postData);
     input.value = '';
   }
 
