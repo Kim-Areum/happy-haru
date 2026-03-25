@@ -482,7 +482,7 @@
         posts.push({ key: child.key, ...child.val() });
       });
     }
-    const recent = posts.slice(-20).reverse();
+    const recent = posts.slice(-30).reverse();
     if (recent.length === 0) {
       list.innerHTML = '<div class="mini-board-item" style="text-align:center;opacity:0.5;">아직 아무도 안 적었어요</div>';
       return;
@@ -497,7 +497,7 @@
   }
 
   // 실시간 업데이트 수신
-  boardRef.limitToLast(50).on('value', snapshot => {
+  boardRef.limitToLast(30).on('value', snapshot => {
     renderBoard(snapshot);
   });
 
