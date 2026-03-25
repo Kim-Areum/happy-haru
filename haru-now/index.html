@@ -335,15 +335,15 @@
 
 <div class="hint" id="hint" data-i18n="hint">하루를 클릭해보세요</div>
 
-<button class="board-btn" onclick="toggleBoard()" data-i18n="board_btn">나는 요즘</button>
+<button class="board-btn" onclick="toggleBoard()" data-i18n="board_btn">나는 지금</button>
 
 <div class="popup-overlay" id="boardOverlay" onclick="closeBoardPopup(event)">
   <div class="popup" id="boardPopup">
-    <div class="popup-status" style="font-size:17px; margin-bottom:4px;" data-i18n="board_title">나는 요즘</div>
-    <div class="mini-board-label" data-i18n="board_desc">요즘 나를 행복하게 한 작은 순간은?</div>
+    <div class="popup-status" style="font-size:17px; margin-bottom:4px;" data-i18n="board_title">나는 지금</div>
+    <div class="mini-board-label" data-i18n="board_desc">지금 뭐하고 있어요?</div>
     <div class="mini-board-input" style="margin-bottom:6px;">
       <input type="text" id="boardNick" placeholder="닉네임" maxlength="10" style="flex:0 0 50px; min-width:0;" data-i18n-ph="nick_ph">
-      <input type="text" id="boardInput" placeholder="퇴근 후 아이스크림 한 입" maxlength="30" onkeydown="if(event.key==='Enter')postBoard()" oninput="if(this.value.length>=30){navigator.vibrate&&navigator.vibrate(50)}" data-i18n-ph="input_ph">
+      <input type="text" id="boardInput" placeholder="카페에서 커피 마시는 중" maxlength="30" onkeydown="if(event.key==='Enter')postBoard()" oninput="if(this.value.length>=30){navigator.vibrate&&navigator.vibrate(50)}" data-i18n-ph="input_ph">
       <button onclick="postBoard()" data-i18n="post_btn">올리기</button>
     </div>
     <div class="mini-board-list" id="boardList"></div>
@@ -380,16 +380,16 @@
   // ── i18n ──
   const nowI18n = {
     en: {
-      header: "What's Haru doing?", hint: "Click on Haru", board_btn: "Lately",
-      board_title: "Lately", board_desc: "A small moment that made you happy recently?",
+      header: "What's Haru doing?", hint: "Click on Haru", board_btn: "Right Now",
+      board_title: "Right Now", board_desc: "What are you doing right now?",
       close: "Close", close2: "Close",
-      post_btn: "Post", nick_ph: "Name", input_ph: "Ice cream after work"
+      post_btn: "Post", nick_ph: "Name", input_ph: "Having coffee at a cafe"
     },
     ja: {
-      header: 'ハル、今何してる？', hint: 'ハルをクリックしてみて', board_btn: '最近の私',
-      board_title: '最近の私', board_desc: '最近あなたを幸せにした小さな瞬間は？',
+      header: 'ハル、今何してる？', hint: 'ハルをクリックしてみて', board_btn: '今の私',
+      board_title: '今の私', board_desc: '今何していますか？',
       close: '閉じる', close2: '閉じる',
-      post_btn: '投稿', nick_ph: 'ニックネーム', input_ph: '退勤後のアイス'
+      post_btn: '投稿', nick_ph: 'ニックネーム', input_ph: 'カフェでコーヒー中'
     }
   };
 
