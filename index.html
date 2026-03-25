@@ -653,6 +653,62 @@
       text-align: right;
     }
 
+    /* ── Haru Now Banner ── */
+    .haru-now-banner {
+      background: var(--bg-subtlest);
+      padding: 48px 24px;
+      cursor: pointer;
+    }
+    .haru-now-card {
+      max-width: 360px;
+      margin: 0 auto;
+      transition: transform 0.2s, box-shadow 0.2s;
+      background: var(--bg-base) !important;
+    }
+    .haru-now-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-floating);
+    }
+    .haru-now-trio {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .haru-mini {
+      height: 80px;
+    }
+    .haru-mini-1 { animation: haruWave1 4.5s ease-in-out infinite; transform-origin: bottom center; }
+    .haru-mini-2 { animation: haruWave2 4.5s ease-in-out 1.5s infinite; transform-origin: bottom center; }
+    .haru-mini-3 { animation: haruWave3 4.5s ease-in-out 3s infinite; transform-origin: bottom center; }
+    @keyframes haruWave1 {
+      0%, 20%, 100% { transform: rotate(0); }
+      5% { transform: rotate(-2.5deg); }
+      10% { transform: rotate(2deg); }
+      15% { transform: rotate(-1.5deg); }
+    }
+    @keyframes haruWave2 {
+      0%, 20%, 100% { transform: rotate(0); }
+      5% { transform: rotate(2.5deg); }
+      10% { transform: rotate(-2deg); }
+      15% { transform: rotate(1.5deg); }
+    }
+    @keyframes haruWave3 {
+      0%, 20%, 100% { transform: rotate(0); }
+      5% { transform: rotate(-2.5deg); }
+      10% { transform: rotate(2deg); }
+      15% { transform: rotate(-1.5deg); }
+    }
+    .haru-now-text {
+      font-size: 19px;
+      color: var(--fg-intense);
+      margin-bottom: 8px;
+    }
+    .haru-now-sub {
+      font-size: 14px;
+      color: var(--fg-muted);
+    }
+
     /* ── Footer ── */
     footer {
       background: var(--bg-subtle);
@@ -886,6 +942,23 @@
   </div>
 </section>
 
+<!-- Haru Now Banner -->
+<section class="haru-now-banner" onclick="window.open('haru-now/', '_blank')">
+  <div class="section-inner">
+    <div class="haru-now-card card">
+      <div class="card-body" style="padding: 28px 24px; text-align: center;">
+        <div class="haru-now-trio">
+          <img class="haru-mini haru-mini-1" src="images/haru_trio_1.png" alt="하루">
+          <img class="haru-mini haru-mini-2" src="images/haru_trio_2.png" alt="하루">
+          <img class="haru-mini haru-mini-3" src="images/haru_trio_3.png" alt="하루">
+        </div>
+        <p class="haru-now-text" data-i18n="haru_now">하루 지금 뭐해?</p>
+        <p class="haru-now-sub" data-i18n="haru_now_sub">지금 하루가 뭘 하고 있는지 보러가기 &#x2192;</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Download -->
 <section class="download-section gingham-pink" id="download">
   <div class="section-inner download-inner">
@@ -1064,7 +1137,9 @@
       footer: "&copy; 2026 Happy Haru &middot; Analog Lab",
       logo_text: "Happy Haru",
       char_draw_hint: "Tap to draw a character",
-      char_draw_btn: "Draw Character"
+      char_draw_btn: "Draw Character",
+      haru_now: "What's Haru doing right now?",
+      haru_now_sub: "Go see what Haru is up to"
     },
     ja: {
       nav_characters: 'キャラ', nav_episodes: 'エピソード', nav_download: 'ダウンロード',
@@ -1104,7 +1179,9 @@
       footer: '&copy; 2026 幸せなハル &middot; Analog Lab',
       logo_text: '幸せなハル',
       char_draw_hint: 'タップしてキャラを引く',
-      char_draw_btn: 'キャラを引く'
+      char_draw_btn: 'キャラを引く',
+      haru_now: 'ハル、今何してる？',
+      haru_now_sub: 'ハルが何をしているか見に行く'
     }
   };
 

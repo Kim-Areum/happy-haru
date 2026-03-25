@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>하루 지금 뭐해?</title>
+  <style>
+    @font-face {
+      font-family: 'Ownglyph_PDH';
+      src: url('Ownglyph_PDH.ttf') format('truetype');
+      font-weight: normal;
+      font-display: swap;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #FFFBF0;
+      --fg: #322E26;
+      --fg-muted: #928A79;
+      --line: #E7E0D1;
+      --stitch: #D6CFBF;
+      --shadow: 0 3px 5px rgba(146,138,121,0.35);
+    }
+
+    body {
+      font-family: 'Ownglyph_PDH', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Scene */
+    .scene {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .scene-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+    .scene:hover .scene-img {
+      transform: scale(1.02);
+    }
+
+    /* Header */
+    .header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(255,251,240,0.9) 0%, transparent 100%);
+    }
+    .header img {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+    }
+    .header span {
+      font-size: 15px;
+      color: rgba(255,251,240,0.7);
+      text-shadow: 0 1px 3px rgba(12,11,8,0.5);
+    }
+
+    /* Text hint */
+    .hint {
+      position: fixed;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 13px;
+      color: rgba(255,251,240,0.7);
+      text-shadow: 0 1px 3px rgba(12,11,8,0.5);
+      z-index: 10;
+      pointer-events: none;
+      animation: hintFade 4s ease-in-out infinite;
+    }
+    @keyframes hintFade {
+      0%, 100% { opacity: 0; }
+      30%, 70% { opacity: 1; }
+    }
+
+    /* Popup overlay */
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(12,11,8,0.5);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.2s ease;
+    }
+    .popup-overlay.active { display: flex; }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Popup card */
+    .popup {
+      background: var(--bg);
+      border-radius: 20px;
+      padding: 32px 28px;
+      max-width: 300px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      box-shadow: var(--shadow);
+      animation: popUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .popup::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border: 1px dashed var(--stitch);
+      border-radius: 17px;
+      pointer-events: none;
+    }
+    @keyframes popUp {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .popup-emoji {
+      font-size: 36px;
+      margin-bottom: 16px;
+    }
+    .popup-status {
+      font-size: 20px;
+      color: var(--fg);
+      margin-bottom: 8px;
+    }
+    .popup-desc {
+      font-size: 15px;
+      color: var(--fg-muted);
+      line-height: 1.6;
+    }
+    /* ── Board Button ── */
+    .board-btn {
+      position: fixed;
+      top: 16px;
+      right: 20px;
+      z-index: 10;
+      padding: 8px 16px;
+      background: rgba(255,251,240,0.85);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--fg-muted);
+      cursor: pointer;
+    }
+    .board-btn::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px dashed var(--stitch);
+      border-radius: 13px;
+      pointer-events: none;
+    }
+    .board-btn:hover { background: var(--bg); }
+
+    .mini-board-label {
+      font-size: 12px;
+      color: var(--fg-muted);
+      margin-bottom: 10px;
+    }
+    .mini-board-input {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .mini-board-input input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 13px;
+      background: var(--bg);
+      color: var(--fg);
+      outline: none;
+    }
+    .mini-board-input input::placeholder { color: var(--stitch); }
+    .mini-board-input input:focus { border-color: var(--fg-muted); }
+    .mini-board-input button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 10px;
+      background: var(--fg);
+      color: var(--bg);
+      font-family: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .mini-board-list {
+      max-height: 96px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      scrollbar-width: none;
+    }
+    .mini-board-list::-webkit-scrollbar { display: none; }
+    .mini-board-item {
+      font-size: 13px;
+      color: var(--fg-muted);
+      padding: 6px 10px;
+      background: rgba(244,239,227,0.5);
+      border-radius: 8px;
+      line-height: 1.4;
+    }
+    .mini-board-item span {
+      font-size: 11px;
+      opacity: 0.6;
+    }
+    .mini-board-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .mini-board-delete {
+      background: none;
+      border: none;
+      color: var(--stitch);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 0 2px;
+      line-height: 1;
+    }
+    .mini-board-delete:hover { color: var(--fg-muted); }
+    .mini-board-nick {
+      font-size: 11px;
+      color: var(--fg-muted);
+      font-weight: 500;
+    }
+    .popup-close {
+      margin-top: 16px;
+      padding: 8px 24px;
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--fg-muted);
+      cursor: pointer;
+      position: relative;
+    }
+    .popup-close::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px dashed var(--stitch);
+      border-radius: 17px;
+      pointer-events: none;
+    }
+
+    /* Transition + Ken Burns */
+    .scene-img {
+      transition: opacity 0.5s ease;
+      will-change: transform, opacity;
+    }
+    .scene-img.fade-out { opacity: 0; }
+    .scene-img.fade-in { opacity: 1; }
+
+    .scene-img.kb-zoom-in { animation: kbZoomIn 15s ease-in-out forwards; }
+    .scene-img.kb-zoom-out { animation: kbZoomOut 15s ease-in-out forwards; }
+    .scene-img.kb-pan-left { animation: kbPanLeft 15s ease-in-out forwards; }
+    .scene-img.kb-pan-right { animation: kbPanRight 15s ease-in-out forwards; }
+
+    @keyframes kbZoomIn {
+      from { transform: scale(1); }
+      to { transform: scale(1.08); }
+    }
+    @keyframes kbZoomOut {
+      from { transform: scale(1.08); }
+      to { transform: scale(1); }
+    }
+    @keyframes kbPanLeft {
+      from { transform: scale(1.05) translateX(1%); }
+      to { transform: scale(1.05) translateX(-1%); }
+    }
+    @keyframes kbPanRight {
+      from { transform: scale(1.05) translateX(-1%); }
+      to { transform: scale(1.05) translateX(1%); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <a href="https://kim-areum.github.io/happy-haru/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+    <img src="images/appicon.png" alt="haru">
+    <span>하루 지금 뭐해?</span>
+  </a>
+</div>
+
+<div class="scene" id="scene" onclick="showPopup()">
+  <img class="scene-img" id="sceneImg" src="" alt="하루">
+</div>
+
+<div class="hint" id="hint">하루를 클릭해보세요</div>
+
+<button class="board-btn" onclick="toggleBoard()">나는 요즘</button>
+
+<div class="popup-overlay" id="boardOverlay" onclick="closeBoardPopup(event)">
+  <div class="popup" id="boardPopup">
+    <div class="popup-status" style="font-size:17px; margin-bottom:4px;">나는 요즘</div>
+    <div class="mini-board-label">요즘 나를 행복하게 한 작은 순간은?</div>
+    <div class="mini-board-input" style="margin-bottom:6px;">
+      <input type="text" id="boardNick" placeholder="닉네임" maxlength="10" style="flex:0 0 50px; min-width:0;">
+      <input type="text" id="boardInput" placeholder="퇴근 후 아이스크림 한 입" maxlength="40" onkeydown="if(event.key==='Enter')postBoard()">
+      <button onclick="postBoard()">올리기</button>
+    </div>
+    <div class="mini-board-list" id="boardList"></div>
+    <button class="popup-close" onclick="closeBoardPopup(event)">닫기</button>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popupOverlay" onclick="closePopup(event)">
+  <div class="popup" id="popup">
+    <div class="popup-emoji" id="popupEmoji"></div>
+    <div class="popup-status" id="popupStatus"></div>
+    <div class="popup-desc" id="popupDesc"></div>
+    <button class="popup-close" onclick="closePopup(event)">닫기</button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script>
+  // ── Firebase ──
+  firebase.initializeApp({
+    apiKey: "AIzaSyBZsPu9K_m6tlJm1kiNikjfSbAMLstFzyg",
+    authDomain: "happy-haru.firebaseapp.com",
+    databaseURL: "https://happy-haru-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "happy-haru",
+    storageBucket: "happy-haru.firebasestorage.app",
+    messagingSenderId: "900024239686",
+    appId: "1:900024239686:web:55069ec8c6bf408043ac47"
+  });
+  const db = firebase.database();
+  const boardRef = db.ref('board');
+</script>
+<script>
+  const scenes = [
+    { img: 'images/reading.png', emoji: '📖', status: '독서 중...', desc: '좋아하는 책에 빠져 있어요. 조용히 해주세요.' },
+    { img: 'images/coffee.png', emoji: '☕', status: '커피 내리는 중...', desc: '원두를 갈고 있어요. 곧 좋은 향이 날 거예요.' },
+    { img: 'images/movie.png', emoji: '🫣', status: '공포 영화 보는 중...', desc: '이불 꽁꽁 싸매고 보는 중. 무섭지만 멈출 수 없어요.' },
+    { img: 'images/night_walk.png', emoji: '🌙', status: '밤 산책 중...', desc: '천변을 걷고 있어요. 밤바람이 좋아요.' },
+    { img: 'images/bath.png', emoji: '🛁', status: '목욕 중...', desc: '따뜻한 물에 몸을 담그고 있어요. 최고의 힐링.' },
+    { img: 'images/warm_milk.png', emoji: '🥛', status: '따뜻한 우유 마시는 중...', desc: '잠이 안 와서 우유를 데웠어요. 마음이 포근해져요.' },
+    { img: 'images/running.png', emoji: '🏃‍♀️', status: '러닝 중...', desc: '해질무렵 공원을 달리고 있어요. 바람이 시원해요.' },
+    { img: 'images/library.png', emoji: '🏛️', status: '도서관에서...', desc: '조용한 도서관에서 책을 고르고 있어요.' },
+    { img: 'images/ventilate.png', emoji: '🪟', status: '환기 중...', desc: '창문을 활짝 열었어요. 바람이 기분 좋게 불어와요.' },
+    { img: 'images/closet.png', emoji: '👗', status: '옷장 정리 중...', desc: '계절이 바뀌어서 옷장을 정리하고 있어요.' },
+    { img: 'images/cooking.png', emoji: '🍜', status: '떡볶이 먹는 중...', desc: '시켜 먹는 떡볶이는 언제나 옳아요.' },
+    { img: 'images/diary.png', emoji: '✏️', status: '일기 쓰는 중...', desc: '이번 달을 돌아보고 있어요.' },
+    { img: 'images/mug.png', emoji: '🍵', status: '차 마시는 중...', desc: '좋아하는 머그컵에 따뜻한 차를 담았어요.' },
+    { img: 'images/bread.png', emoji: '🥐', status: '빵과 커피...', desc: '갓 구운 빵 향기가 집 안 가득. 행복한 아침이에요.' },
+    { img: 'images/cherry.png', emoji: '🌸', status: '벚꽃 구경 중...', desc: '밤에 보는 벚꽃은 또 다른 느낌이에요.' },
+    { img: 'images/videocall.png', emoji: '📱', status: '엄마랑 영상통화 중...', desc: '구례에 계신 엄마와 얼굴 보며 이야기하고 있어요.' },
+    { img: 'images/ria_studio.png', emoji: '🎨', status: '리아 작업실에서...', desc: '리아랑 큰 캔버스에 같이 그림 그리는 중.' },
+    { img: 'images/flower.png', emoji: '💐', status: '꽃집에서...', desc: '예쁜 꽃을 구경하고 있어요. 뭘 살지 고민 중.' },
+    { img: 'images/mart.png', emoji: '🛒', status: '마트에서 알바 중...', desc: '오늘도 열심히 일하고 있어요. 퇴근까지 조금만!' },
+    { img: 'images/bookstore.png', emoji: '📚', status: '스캐터북스에서...', desc: '제논 사장님이랑 이런저런 이야기를 나눴어요.' }
+  ];
+
+  let currentScene = 0;
+  let sceneOrder = [];
+
+  function shuffleScenes() {
+    sceneOrder = [...Array(scenes.length).keys()];
+    sceneOrder.sort(() => Math.random() - 0.5);
+  }
+
+  const kbEffects = ['kb-zoom-in', 'kb-zoom-out', 'kb-pan-left', 'kb-pan-right'];
+
+  function applyKenBurns(img) {
+    kbEffects.forEach(c => img.classList.remove(c));
+    void img.offsetWidth;
+    img.classList.add(kbEffects[Math.floor(Math.random() * kbEffects.length)]);
+  }
+
+  function init() {
+    shuffleScenes();
+    currentScene = sceneOrder.pop();
+    const img = document.getElementById('sceneImg');
+    img.src = scenes[currentScene].img;
+    img.classList.add('fade-in');
+    applyKenBurns(img);
+  }
+
+  function loadScene() {
+    if (sceneOrder.length === 0) shuffleScenes();
+    currentScene = sceneOrder.pop();
+    const s = scenes[currentScene];
+    const img = document.getElementById('sceneImg');
+
+    img.classList.add('fade-out');
+    img.classList.remove('fade-in');
+
+    setTimeout(() => {
+      img.src = s.img;
+      img.onload = () => {
+        img.classList.remove('fade-out');
+        img.classList.add('fade-in');
+        applyKenBurns(img);
+      };
+    }, 500);
+
+    document.getElementById('hint').style.display = '';
+  }
+
+  function showPopup() {
+    const s = scenes[currentScene];
+    document.getElementById('popupEmoji').textContent = s.emoji;
+    document.getElementById('popupStatus').textContent = s.status;
+    document.getElementById('popupDesc').textContent = s.desc;
+    document.getElementById('popupOverlay').classList.add('active');
+    document.getElementById('hint').style.display = 'none';
+  }
+
+  function closePopup(e) {
+    if (e.target === document.getElementById('popupOverlay') || e.target.classList.contains('popup-close')) {
+      document.getElementById('popupOverlay').classList.remove('active');
+      loadScene();
+    }
+  }
+
+  // ── Mini Board (Firebase) ──
+  let myPostIds = JSON.parse(localStorage.getItem('haru_my_posts') || '[]');
+
+  function escapeHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function getTimeAgo(iso) {
+    const diff = Date.now() - new Date(iso).getTime();
+    const m = Math.floor(diff / 60000);
+    if (m < 1) return '방금';
+    if (m < 60) return m + '분 전';
+    const h = Math.floor(m / 60);
+    if (h < 24) return h + '시간 전';
+    return Math.floor(h / 24) + '일 전';
+  }
+
+  function renderBoard(snapshot) {
+    const list = document.getElementById('boardList');
+    const posts = [];
+    if (snapshot) {
+      snapshot.forEach(child => {
+        posts.push({ key: child.key, ...child.val() });
+      });
+    }
+    const recent = posts.slice(-20).reverse();
+    if (recent.length === 0) {
+      list.innerHTML = '<div class="mini-board-item" style="text-align:center;opacity:0.5;">아직 아무도 안 적었어요</div>';
+      return;
+    }
+    list.innerHTML = recent.map(p => {
+      const ago = getTimeAgo(p.date);
+      const nick = p.nick ? `<span class="mini-board-nick">${escapeHtml(p.nick)}</span> ` : '';
+      const isMine = myPostIds.includes(p.key);
+      const delBtn = isMine ? `<button class="mini-board-delete" onclick="deletePost('${p.key}')">×</button>` : '';
+      return `<div class="mini-board-item"><div class="mini-board-item-row"><div>${nick}${escapeHtml(p.text)} <span>${ago}</span></div>${delBtn}</div></div>`;
+    }).join('');
+  }
+
+  // 실시간 업데이트 수신
+  boardRef.limitToLast(50).on('value', snapshot => {
+    renderBoard(snapshot);
+  });
+
+  window.toggleBoard = function() {
+    document.getElementById('boardOverlay').classList.add('active');
+  }
+
+  window.closeBoardPopup = function(e) {
+    if (e.target === document.getElementById('boardOverlay') || e.target.classList.contains('popup-close')) {
+      document.getElementById('boardOverlay').classList.remove('active');
+    }
+  }
+
+  window.postBoard = function() {
+    const input = document.getElementById('boardInput');
+    const nickInput = document.getElementById('boardNick');
+    const text = input.value.trim();
+    const nick = nickInput.value.trim();
+    if (!text) return;
+    const newRef = boardRef.push();
+    newRef.set({ text, nick, date: new Date().toISOString() });
+    myPostIds.push(newRef.key);
+    localStorage.setItem('haru_my_posts', JSON.stringify(myPostIds));
+    input.value = '';
+  }
+
+  window.deletePost = function(key) {
+    boardRef.child(key).remove();
+    myPostIds = myPostIds.filter(id => id !== key);
+    localStorage.setItem('haru_my_posts', JSON.stringify(myPostIds));
+  }
+  init();
+</script>
+
+</body>
+</html>
