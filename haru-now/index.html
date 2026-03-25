@@ -226,6 +226,9 @@
       background: rgba(244,239,227,0.5);
       border-radius: 8px;
       line-height: 1.4;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .mini-board-item span {
       font-size: 11px;
@@ -235,6 +238,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      min-width: 0;
+    }
+    .mini-board-item-row > div {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
     }
     .mini-board-delete {
       background: none;
@@ -326,7 +336,7 @@
     <div class="mini-board-label">요즘 나를 행복하게 한 작은 순간은?</div>
     <div class="mini-board-input" style="margin-bottom:6px;">
       <input type="text" id="boardNick" placeholder="닉네임" maxlength="10" style="flex:0 0 50px; min-width:0;">
-      <input type="text" id="boardInput" placeholder="퇴근 후 아이스크림 한 입" maxlength="25" onkeydown="if(event.key==='Enter')postBoard()">
+      <input type="text" id="boardInput" placeholder="퇴근 후 아이스크림 한 입" maxlength="20" onkeydown="if(event.key==='Enter')postBoard()" oninput="if(this.value.length>=20){navigator.vibrate&&navigator.vibrate(50)}">
       <button onclick="postBoard()">올리기</button>
     </div>
     <div class="mini-board-list" id="boardList"></div>
