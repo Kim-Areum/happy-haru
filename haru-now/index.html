@@ -360,9 +360,9 @@
 
 <div class="hint" id="hint" data-i18n="hint">하루를 클릭해보세요</div>
 
-<button class="music-btn" id="musicBtn" onclick="toggleMusic()">🔇</button>
+<button class="music-btn" id="musicBtn" onclick="toggleMusic()"><img id="musicIcon" src="images/sound_off.png" style="width:20px;height:20px;"></button>
 <button class="board-btn" onclick="toggleBoard()" data-i18n="board_btn">나는 지금</button>
-<audio id="bgm" src="bgm.mp3" loop preload="auto"></audio>
+<audio id="bgm" loop preload="auto"></audio>
 
 <div class="popup-overlay" id="boardOverlay" onclick="closeBoardPopup(event)">
   <div class="popup" id="boardPopup">
@@ -616,16 +616,25 @@
     renderBoard(snapshot);
   });
 
+  const bgmList = ['bgm1.mp3', 'bgm2.mp3', 'bgm3.mp3', 'bgm4.mp3', 'bgm5.mp3'];
+  let bgmIndex = Math.floor(Math.random() * bgmList.length);
+  const bgm = document.getElementById('bgm');
+  bgm.src = bgmList[bgmIndex];
+  bgm.addEventListener('ended', () => {
+    bgmIndex = (bgmIndex + 1) % bgmList.length;
+    bgm.src = bgmList[bgmIndex];
+    bgm.play();
+  });
+
   window.toggleMusic = function() {
-    const bgm = document.getElementById('bgm');
-    const btn = document.getElementById('musicBtn');
+    const icon = document.getElementById('musicIcon');
     if (bgm.paused) {
       bgm.volume = 0.3;
       bgm.play();
-      btn.textContent = '🔊';
+      icon.src = 'images/sound_on.png';
     } else {
       bgm.pause();
-      btn.textContent = '🔇';
+      icon.src = 'images/sound_off.png';
     }
   }
 
