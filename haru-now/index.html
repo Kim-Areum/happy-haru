@@ -328,8 +328,7 @@
 </div>
 
 <div class="scene" id="scene" onclick="showPopup()">
-  <img class="scene-img" id="sceneImgBack" src="" alt="하루">
-  <img class="scene-img" id="sceneImg" src="" alt="하루" style="position:absolute;inset:0;">
+  <img class="scene-img" id="sceneImg" src="" alt="하루">
 </div>
 
 <div class="hint" id="hint" data-i18n="hint">하루를 클릭해보세요</div>
@@ -511,10 +510,7 @@
     shuffleScenes();
     currentScene = sceneOrder.pop();
     const img = document.getElementById('sceneImg');
-    const back = document.getElementById('sceneImgBack');
     img.src = scenes[currentScene].img;
-    back.src = scenes[currentScene].img;
-    img.style.opacity = '1';
     applyKenBurns(img);
   }
 
@@ -523,32 +519,9 @@
     currentScene = sceneOrder.pop();
     const s = scenes[currentScene];
     const img = document.getElementById('sceneImg');
-    const back = document.getElementById('sceneImgBack');
-
-    // 새 이미지 미리 로드
-    const preload = new Image();
-    preload.onload = () => {
-      // 현재 이미지를 뒤에 깔기
-      back.src = img.src;
-      kbEffects.forEach(c => back.classList.remove(c));
-      kbEffects.forEach(c => img.classList.remove(c));
-
-      // 앞 이미지 즉시 투명 + 새 이미지 교체
-      img.style.opacity = '0';
-      img.src = s.img;
-
-      // 50ms 후 페이드인
-      setTimeout(() => {
-        img.style.transition = 'opacity 1s ease';
-        img.style.opacity = '1';
-        applyKenBurns(img);
-
-        // 전환 끝나면 transition 리셋
-        setTimeout(() => { img.style.transition = ''; }, 1000);
-      }, 50);
-    };
-    preload.src = s.img;
-
+    kbEffects.forEach(c => img.classList.remove(c));
+    img.src = s.img;
+    applyKenBurns(img);
     document.getElementById('hint').style.display = '';
   }
 
