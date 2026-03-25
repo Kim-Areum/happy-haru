@@ -199,7 +199,7 @@
     .music-btn {
       position: fixed;
       top: 16px;
-      right: 100px;
+      right: 140px;
       z-index: 10;
       width: 32px;
       height: 32px;
@@ -361,6 +361,17 @@
     @keyframes kbPanRight {
       from { transform: scale(1.05) translateX(-1%); }
       to { transform: scale(1.05) translateX(1%); }
+    }
+    /* English / Japanese smaller inputs */
+    html[lang="en"] .mini-board-input input,
+    html[lang="ja"] .mini-board-input input {
+      font-size: 11px;
+      padding: 6px 8px;
+    }
+    html[lang="en"] .mini-board-input button,
+    html[lang="ja"] .mini-board-input button {
+      font-size: 11px;
+      padding: 6px 10px;
     }
   </style>
 </head>
