@@ -176,6 +176,25 @@
     }
     .board-btn:hover { background: var(--bg); }
 
+    /* Board popup header */
+    .board-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .board-lang-select {
+      padding: 3px 6px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--fg-muted);
+      font-family: inherit;
+      font-size: 11px;
+      outline: none;
+      cursor: pointer;
+    }
+
     /* Music Button */
     .music-btn {
       position: fixed;
@@ -366,7 +385,14 @@
 
 <div class="popup-overlay" id="boardOverlay" onclick="closeBoardPopup(event)">
   <div class="popup" id="boardPopup">
-    <div class="popup-status" style="font-size:17px; margin-bottom:4px;" data-i18n="board_title">나는 지금</div>
+    <div class="board-header">
+      <div class="popup-status" style="font-size:17px;" data-i18n="board_title">나는 지금</div>
+      <select class="board-lang-select" id="boardLangSelect" onchange="switchBoardLang(this.value)">
+        <option value="ko">한국어</option>
+        <option value="en">English</option>
+        <option value="ja">日本語</option>
+      </select>
+    </div>
     <div class="mini-board-label" data-i18n="board_desc">지금 뭐하고 있어요?</div>
     <div class="mini-board-input" style="margin-bottom:6px;">
       <input type="text" id="boardNick" placeholder="닉네임" maxlength="10" style="flex:0 0 50px; min-width:0;" data-i18n-ph="nick_ph">
@@ -589,12 +615,21 @@
     return Math.floor(h / 24) + '일 전';
   }
 
+  function getCurrentBoardLang() {
+    const sel = document.getElementById('boardLangSelect');
+    return sel ? sel.value : (document.documentElement.lang || 'ko');
+  }
+
   function renderBoard(snapshot) {
     const list = document.getElementById('boardList');
+    const lang = getCurrentBoardLang();
     const posts = [];
     if (snapshot) {
       snapshot.forEach(child => {
-        posts.push({ key: child.key, ...child.val() });
+        const val = child.val();
+        if (!val.lang || val.lang === lang) {
+          posts.push({ key: child.key, ...val });
+        }
       });
     }
     const recent = posts.slice(-30).reverse();
@@ -611,8 +646,10 @@
     }).join('');
   }
 
+  let boardSnapshot = null;
   // 실시간 업데이트 수신
-  boardRef.limitToLast(30).on('value', snapshot => {
+  boardRef.limitToLast(50).on('value', snapshot => {
+    boardSnapshot = snapshot;
     renderBoard(snapshot);
   });
 
@@ -638,8 +675,18 @@
     }
   }
 
+  window.switchBoardLang = function(lang) {
+    localStorage.setItem('haru_lang', lang);
+    document.documentElement.lang = lang;
+    applyLang();
+    if (boardSnapshot) renderBoard(boardSnapshot);
+  }
+
   window.toggleBoard = function() {
+    const sel = document.getElementById('boardLangSelect');
+    sel.value = document.documentElement.lang || 'ko';
     document.getElementById('boardOverlay').classList.add('active');
+    if (boardSnapshot) renderBoard(boardSnapshot);
   }
 
   window.closeBoardPopup = function(e) {
@@ -655,7 +702,8 @@
     const nick = nickInput.value.trim();
     if (!text) return;
     const newRef = boardRef.push();
-    const postData = { text, nick, date: new Date().toISOString() };
+    const lang = getCurrentBoardLang();
+    const postData = { text, nick, lang, date: new Date().toISOString() };
     myPostIds.push(newRef.key);
     localStorage.setItem('haru_my_posts', JSON.stringify(myPostIds));
     newRef.set(postData);
