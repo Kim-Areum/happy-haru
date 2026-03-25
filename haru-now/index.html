@@ -326,7 +326,7 @@
 <div class="header">
   <a href="https://kim-areum.github.io/happy-haru/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
     <img src="images/appicon.png" alt="haru">
-    <span>하루 지금 뭐해?</span>
+    <span data-i18n="header">하루 지금 뭐해?</span>
   </a>
 </div>
 
@@ -334,21 +334,21 @@
   <img class="scene-img" id="sceneImg" src="" alt="하루">
 </div>
 
-<div class="hint" id="hint">하루를 클릭해보세요</div>
+<div class="hint" id="hint" data-i18n="hint">하루를 클릭해보세요</div>
 
-<button class="board-btn" onclick="toggleBoard()">나는 요즘</button>
+<button class="board-btn" onclick="toggleBoard()" data-i18n="board_btn">나는 요즘</button>
 
 <div class="popup-overlay" id="boardOverlay" onclick="closeBoardPopup(event)">
   <div class="popup" id="boardPopup">
-    <div class="popup-status" style="font-size:17px; margin-bottom:4px;">나는 요즘</div>
-    <div class="mini-board-label">요즘 나를 행복하게 한 작은 순간은?</div>
+    <div class="popup-status" style="font-size:17px; margin-bottom:4px;" data-i18n="board_title">나는 요즘</div>
+    <div class="mini-board-label" data-i18n="board_desc">요즘 나를 행복하게 한 작은 순간은?</div>
     <div class="mini-board-input" style="margin-bottom:6px;">
       <input type="text" id="boardNick" placeholder="닉네임" maxlength="10" style="flex:0 0 50px; min-width:0;">
       <input type="text" id="boardInput" placeholder="퇴근 후 아이스크림 한 입" maxlength="20" onkeydown="if(event.key==='Enter')postBoard()" oninput="if(this.value.length>=20){navigator.vibrate&&navigator.vibrate(50)}">
       <button onclick="postBoard()">올리기</button>
     </div>
     <div class="mini-board-list" id="boardList"></div>
-    <button class="popup-close" onclick="closeBoardPopup(event)">닫기</button>
+    <button class="popup-close" onclick="closeBoardPopup(event)" data-i18n="close">닫기</button>
   </div>
 </div>
 
@@ -357,7 +357,7 @@
     <div class="popup-emoji" id="popupEmoji"></div>
     <div class="popup-status" id="popupStatus"></div>
     <div class="popup-desc" id="popupDesc"></div>
-    <button class="popup-close" onclick="closePopup(event)">닫기</button>
+    <button class="popup-close" onclick="closePopup(event)" data-i18n="close2">닫기</button>
   </div>
 </div>
 
@@ -378,6 +378,86 @@
   const boardRef = db.ref('board');
 </script>
 <script>
+  // ── i18n ──
+  const nowI18n = {
+    en: {
+      header: "What's Haru doing?", hint: "Click on Haru", board_btn: "Lately",
+      board_title: "Lately", board_desc: "A small moment that made you happy recently?",
+      close: "Close", close2: "Close"
+    },
+    ja: {
+      header: 'ハル、今何してる？', hint: 'ハルをクリックしてみて', board_btn: '最近の私',
+      board_title: '最近の私', board_desc: '最近あなたを幸せにした小さな瞬間は？',
+      close: '閉じる', close2: '閉じる'
+    }
+  };
+
+  const scenesI18n = {
+    en: [
+      { status: 'Reading...', desc: "Lost in a good book. Please be quiet." },
+      { status: 'Making coffee...', desc: "Grinding beans. A nice aroma is coming soon." },
+      { status: 'Watching a horror movie...', desc: "Wrapped in a blanket. Scary but can't stop." },
+      { status: 'Night walk...', desc: "Walking by the stream. The night breeze feels nice." },
+      { status: 'Taking a bath...', desc: "Soaking in warm water. The best healing." },
+      { status: 'Drinking warm milk...', desc: "Couldn't sleep, so I heated up some milk." },
+      { status: 'Running...', desc: "Running in the park at sunset. The breeze is nice." },
+      { status: 'At the library...', desc: "Browsing for books at the quiet library." },
+      { status: 'Airing out...', desc: "Opened the window wide. The breeze feels good." },
+      { status: 'Organizing closet...', desc: "The seasons are changing, time to sort clothes." },
+      { status: 'Eating tteokbokki...', desc: "Delivery tteokbokki is always a good idea." },
+      { status: 'Writing a diary...', desc: "Looking back on this month." },
+      { status: 'Having tea...', desc: "Poured warm tea into my favorite mug." },
+      { status: 'Bread and coffee...', desc: "Fresh bread smell fills the house. Happy morning." },
+      { status: 'Cherry blossoms...', desc: "Cherry blossoms at night hit different." },
+      { status: 'Video calling Mom...', desc: "Talking face to face with Mom in Gurye." },
+      { status: "At Ria's studio...", desc: "Painting together on a big canvas with Ria." },
+      { status: 'At the flower shop...', desc: "Looking at pretty flowers. Can't decide what to get." },
+      { status: 'Working at the mart...', desc: "Working hard today. Almost time to clock out!" },
+      { status: 'At Scatter Books...', desc: "Chatting with Zenon about this and that." }
+    ],
+    ja: [
+      { status: '読書中...', desc: '好きな本に夢中です。静かにしてね。' },
+      { status: 'コーヒーを淹れ中...', desc: '豆を挽いています。もうすぐいい香りが。' },
+      { status: 'ホラー映画鑑賞中...', desc: '布団にくるまって鑑賞中。怖いけど止められない。' },
+      { status: '夜のお散歩中...', desc: '川沿いを歩いています。夜風が気持ちいい。' },
+      { status: 'お風呂中...', desc: '温かいお湯に浸かっています。最高の癒し。' },
+      { status: 'ホットミルク中...', desc: '眠れなくてミルクを温めました。' },
+      { status: 'ランニング中...', desc: '夕暮れの公園を走っています。風が気持ちいい。' },
+      { status: '図書館にて...', desc: '静かな図書館で本を選んでいます。' },
+      { status: '換気中...', desc: '窓を大きく開けました。風が気持ちいい。' },
+      { status: 'クローゼット整理中...', desc: '季節の変わり目で服を整理しています。' },
+      { status: 'トッポッキ食べ中...', desc: 'デリバリーのトッポッキは最高。' },
+      { status: '日記を書き中...', desc: '今月を振り返っています。' },
+      { status: 'お茶中...', desc: 'お気に入りのマグカップに温かいお茶を。' },
+      { status: 'パンとコーヒー...', desc: '焼きたてパンの香りが部屋いっぱい。幸せな朝。' },
+      { status: '夜桜鑑賞中...', desc: '夜の桜はまた違った雰囲気。' },
+      { status: 'お母さんとビデオ通話中...', desc: '求礼にいるお母さんと顔を見ながらお話し中。' },
+      { status: 'リアのアトリエにて...', desc: 'リアと大きなキャンバスに一緒に絵を描いてる。' },
+      { status: 'お花屋さんにて...', desc: '綺麗なお花を見ています。何を買おうかな。' },
+      { status: 'マートでバイト中...', desc: '今日も頑張って働いてます。退勤までもう少し！' },
+      { status: 'スキャターブックスにて...', desc: 'ゼノン店長といろんな話をしました。' }
+    ]
+  };
+
+  function applyLang() {
+    const lang = localStorage.getItem('haru_lang') || 'ko';
+    document.documentElement.lang = lang;
+    if (lang === 'ko') return;
+    const dict = nowI18n[lang];
+    if (!dict) return;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (dict[key]) el.textContent = dict[key];
+    });
+  }
+  applyLang();
+
+  function getSceneText(idx, field) {
+    const lang = document.documentElement.lang;
+    if (lang !== 'ko' && scenesI18n[lang]) return scenesI18n[lang][idx][field];
+    return scenes[idx][field];
+  }
+
   const scenes = [
     { img: 'images/reading.png', emoji: '📖', status: '독서 중...', desc: '좋아하는 책에 빠져 있어요. 조용히 해주세요.' },
     { img: 'images/coffee.png', emoji: '☕', status: '커피 내리는 중...', desc: '원두를 갈고 있어요. 곧 좋은 향이 날 거예요.' },
@@ -450,8 +530,8 @@
   function showPopup() {
     const s = scenes[currentScene];
     document.getElementById('popupEmoji').textContent = s.emoji;
-    document.getElementById('popupStatus').textContent = s.status;
-    document.getElementById('popupDesc').textContent = s.desc;
+    document.getElementById('popupStatus').textContent = getSceneText(currentScene, 'status');
+    document.getElementById('popupDesc').textContent = getSceneText(currentScene, 'desc');
     document.getElementById('popupOverlay').classList.add('active');
     document.getElementById('hint').style.display = 'none';
   }

@@ -1187,6 +1187,7 @@
 
   window.switchLang = function(lang) {
     document.documentElement.lang = lang;
+    localStorage.setItem('haru_lang', lang);
     if (lang === 'ko') {
       document.querySelectorAll('[data-i18n]').forEach(el => {
         if (el._origText !== undefined) {
@@ -1209,6 +1210,13 @@
         else el.textContent = dict[key];
       }
     });
+  }
+
+  // Restore saved language
+  const savedLang = localStorage.getItem('haru_lang');
+  if (savedLang && savedLang !== 'ko') {
+    document.getElementById('langSelect').value = savedLang;
+    switchLang(savedLang);
   }
 </script>
 
