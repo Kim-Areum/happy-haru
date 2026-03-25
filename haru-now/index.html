@@ -176,6 +176,33 @@
     }
     .board-btn:hover { background: var(--bg); }
 
+    /* Music Button */
+    .music-btn {
+      position: fixed;
+      top: 16px;
+      right: 100px;
+      z-index: 10;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      background: rgba(255,251,240,0.85);
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .music-btn::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px dashed var(--stitch);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
     .mini-board-label {
       font-size: 12px;
       color: var(--fg-muted);
@@ -333,7 +360,9 @@
 
 <div class="hint" id="hint" data-i18n="hint">하루를 클릭해보세요</div>
 
+<button class="music-btn" id="musicBtn" onclick="toggleMusic()">🔇</button>
 <button class="board-btn" onclick="toggleBoard()" data-i18n="board_btn">나는 지금</button>
+<audio id="bgm" src="bgm.mp3" loop preload="auto"></audio>
 
 <div class="popup-overlay" id="boardOverlay" onclick="closeBoardPopup(event)">
   <div class="popup" id="boardPopup">
@@ -586,6 +615,19 @@
   boardRef.limitToLast(30).on('value', snapshot => {
     renderBoard(snapshot);
   });
+
+  window.toggleMusic = function() {
+    const bgm = document.getElementById('bgm');
+    const btn = document.getElementById('musicBtn');
+    if (bgm.paused) {
+      bgm.volume = 0.3;
+      bgm.play();
+      btn.textContent = '🔊';
+    } else {
+      bgm.pause();
+      btn.textContent = '🔇';
+    }
+  }
 
   window.toggleBoard = function() {
     document.getElementById('boardOverlay').classList.add('active');
