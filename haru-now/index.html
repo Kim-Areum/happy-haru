@@ -226,13 +226,15 @@
     .mini-board-item {
       font-size: 13px;
       color: var(--fg-muted);
-      padding: 6px 10px;
+      padding: 8px 10px;
       background: rgba(244,239,227,0.5);
       border-radius: 8px;
-      line-height: 1.4;
+      line-height: 1;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
     }
     .mini-board-item span {
       font-size: 11px;
@@ -243,12 +245,14 @@
       justify-content: space-between;
       align-items: center;
       min-width: 0;
+      width: 100%;
     }
     .mini-board-item-row > div {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       min-width: 0;
+      line-height: 1;
     }
     .mini-board-delete {
       background: none;
