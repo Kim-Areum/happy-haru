@@ -1212,11 +1212,16 @@
     });
   }
 
-  // Restore saved language
-  const savedLang = localStorage.getItem('haru_lang');
-  if (savedLang && savedLang !== 'ko') {
-    document.getElementById('langSelect').value = savedLang;
-    switchLang(savedLang);
+  // Restore or detect language
+  let initLang = localStorage.getItem('haru_lang');
+  if (!initLang) {
+    const browserLang = (navigator.language || '').toLowerCase();
+    if (browserLang.startsWith('ja')) initLang = 'ja';
+    else if (browserLang.startsWith('en')) initLang = 'en';
+  }
+  if (initLang && initLang !== 'ko') {
+    document.getElementById('langSelect').value = initLang;
+    switchLang(initLang);
   }
 </script>
 

@@ -440,7 +440,13 @@
   };
 
   function applyLang() {
-    const lang = localStorage.getItem('haru_lang') || 'ko';
+    let lang = localStorage.getItem('haru_lang');
+    if (!lang) {
+      const browserLang = (navigator.language || '').toLowerCase();
+      if (browserLang.startsWith('ja')) lang = 'ja';
+      else if (browserLang.startsWith('en')) lang = 'en';
+      else lang = 'ko';
+    }
     document.documentElement.lang = lang;
     if (lang === 'ko') return;
     const dict = nowI18n[lang];
