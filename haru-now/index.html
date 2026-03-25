@@ -627,7 +627,7 @@
     if (snapshot) {
       snapshot.forEach(child => {
         const val = child.val();
-        if (!val.lang || val.lang === lang) {
+        if ((val.lang || 'ko') === lang) {
           posts.push({ key: child.key, ...val });
         }
       });
