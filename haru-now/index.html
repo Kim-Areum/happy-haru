@@ -292,11 +292,9 @@
 
     /* Transition + Ken Burns */
     .scene-img {
-      transition: opacity 0.5s ease;
+      transition: opacity 0.8s ease;
       will-change: transform, opacity;
     }
-    .scene-img.fade-out { opacity: 0; }
-    .scene-img.fade-in { opacity: 1; }
 
     .scene-img.kb-zoom-in { animation: kbZoomIn 15s ease-in-out forwards; }
     .scene-img.kb-zoom-out { animation: kbZoomOut 15s ease-in-out forwards; }
@@ -331,7 +329,8 @@
 </div>
 
 <div class="scene" id="scene" onclick="showPopup()">
-  <img class="scene-img" id="sceneImg" src="" alt="하루">
+  <img class="scene-img" id="sceneImgBack" src="" alt="하루">
+  <img class="scene-img" id="sceneImg" src="" alt="하루" style="position:absolute;inset:0;">
 </div>
 
 <div class="hint" id="hint" data-i18n="hint">하루를 클릭해보세요</div>
@@ -513,8 +512,10 @@
     shuffleScenes();
     currentScene = sceneOrder.pop();
     const img = document.getElementById('sceneImg');
+    const back = document.getElementById('sceneImgBack');
     img.src = scenes[currentScene].img;
-    img.classList.add('fade-in');
+    back.src = scenes[currentScene].img;
+    img.style.opacity = '1';
     applyKenBurns(img);
   }
 
@@ -523,18 +524,22 @@
     currentScene = sceneOrder.pop();
     const s = scenes[currentScene];
     const img = document.getElementById('sceneImg');
+    const back = document.getElementById('sceneImgBack');
 
-    img.classList.add('fade-out');
-    img.classList.remove('fade-in');
+    // 현재 이미지를 뒤에 깔기
+    back.src = img.src;
+    img.style.opacity = '0';
 
-    setTimeout(() => {
+    // 새 이미지 로드 후 페이드인
+    const newImg = new Image();
+    newImg.onload = () => {
       img.src = s.img;
-      img.onload = () => {
-        img.classList.remove('fade-out');
-        img.classList.add('fade-in');
+      requestAnimationFrame(() => {
+        img.style.opacity = '1';
         applyKenBurns(img);
-      };
-    }, 500);
+      });
+    };
+    newImg.src = s.img;
 
     document.getElementById('hint').style.display = '';
   }
