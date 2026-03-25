@@ -513,16 +513,21 @@
       else lang = 'ko';
     }
     document.documentElement.lang = lang;
-    if (lang === 'ko') return;
-    const dict = nowI18n[lang];
-    if (!dict) return;
+
+    // 원본 저장 + 복원/번역
     document.querySelectorAll('[data-i18n]').forEach(el => {
+      if (!el._origText) el._origText = el.textContent;
+      if (lang === 'ko') { el.textContent = el._origText; return; }
+      const dict = nowI18n[lang];
       const key = el.getAttribute('data-i18n');
-      if (dict[key]) el.textContent = dict[key];
+      if (dict && dict[key]) el.textContent = dict[key];
     });
     document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+      if (!el._origPh) el._origPh = el.placeholder;
+      if (lang === 'ko') { el.placeholder = el._origPh; return; }
+      const dict = nowI18n[lang];
       const key = el.getAttribute('data-i18n-ph');
-      if (dict[key]) el.placeholder = dict[key];
+      if (dict && dict[key]) el.placeholder = dict[key];
     });
   }
   applyLang();
