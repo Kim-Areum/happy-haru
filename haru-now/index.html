@@ -523,7 +523,7 @@
   let sceneOrder = [];
 
   function shuffleScenes() {
-    sceneOrder = [...Array(scenes.length).keys()];
+    sceneOrder = [...Array(scenes.length).keys()].filter(i => i !== currentScene);
     sceneOrder.sort(() => Math.random() - 0.5);
   }
 
