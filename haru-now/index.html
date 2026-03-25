@@ -343,9 +343,9 @@
     <div class="popup-status" style="font-size:17px; margin-bottom:4px;" data-i18n="board_title">나는 요즘</div>
     <div class="mini-board-label" data-i18n="board_desc">요즘 나를 행복하게 한 작은 순간은?</div>
     <div class="mini-board-input" style="margin-bottom:6px;">
-      <input type="text" id="boardNick" placeholder="닉네임" maxlength="10" style="flex:0 0 50px; min-width:0;">
-      <input type="text" id="boardInput" placeholder="퇴근 후 아이스크림 한 입" maxlength="20" onkeydown="if(event.key==='Enter')postBoard()" oninput="if(this.value.length>=20){navigator.vibrate&&navigator.vibrate(50)}">
-      <button onclick="postBoard()">올리기</button>
+      <input type="text" id="boardNick" placeholder="닉네임" maxlength="10" style="flex:0 0 50px; min-width:0;" data-i18n-ph="nick_ph">
+      <input type="text" id="boardInput" placeholder="퇴근 후 아이스크림 한 입" maxlength="20" onkeydown="if(event.key==='Enter')postBoard()" oninput="if(this.value.length>=20){navigator.vibrate&&navigator.vibrate(50)}" data-i18n-ph="input_ph">
+      <button onclick="postBoard()" data-i18n="post_btn">올리기</button>
     </div>
     <div class="mini-board-list" id="boardList"></div>
     <button class="popup-close" onclick="closeBoardPopup(event)" data-i18n="close">닫기</button>
@@ -383,12 +383,14 @@
     en: {
       header: "What's Haru doing?", hint: "Click on Haru", board_btn: "Lately",
       board_title: "Lately", board_desc: "A small moment that made you happy recently?",
-      close: "Close", close2: "Close"
+      close: "Close", close2: "Close",
+      post_btn: "Post", nick_ph: "Name", input_ph: "Ice cream after work"
     },
     ja: {
       header: 'ハル、今何してる？', hint: 'ハルをクリックしてみて', board_btn: '最近の私',
       board_title: '最近の私', board_desc: '最近あなたを幸せにした小さな瞬間は？',
-      close: '閉じる', close2: '閉じる'
+      close: '閉じる', close2: '閉じる',
+      post_btn: '投稿', nick_ph: 'ニックネーム', input_ph: '退勤後のアイス'
     }
   };
 
@@ -454,6 +456,10 @@
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
       if (dict[key]) el.textContent = dict[key];
+    });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+      const key = el.getAttribute('data-i18n-ph');
+      if (dict[key]) el.placeholder = dict[key];
     });
   }
   applyLang();
