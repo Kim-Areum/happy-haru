@@ -172,9 +172,14 @@
   <div class="section-title">앞표지 선택</div>
   <div class="section-desc">미니북의 앞표지 이미지를 선택하세요</div>
   <div style="margin-bottom:16px;">
-    <div class="section-title" style="font-size:13px; margin-bottom:8px;">표지 제목</div>
-    <input type="text" class="name-input" id="coverTitle" value="나의 작은 행복 일기" maxlength="30">
+    <div class="section-title" style="font-size:13px; margin-bottom:8px;">표지 제목 <span style="font-size:11px; color:var(--fg-pale);">(선택)</span></div>
+    <input type="text" class="name-input" id="coverTitle" value="나의 작은 행복 일기" maxlength="30" placeholder="제목 없이 이미지만 사용" oninput="updateTitleCount()">
     <div class="char-count"><span id="titleCharCount">10</span> / 30</div>
+  </div>
+  <div style="margin-bottom:16px;">
+    <div class="section-title" style="font-size:13px; margin-bottom:8px;">부제목 <span style="font-size:11px; color:var(--fg-pale);">(선택)</span></div>
+    <input type="text" class="name-input" id="coverSubtitle" placeholder="예: 2026. 3 / 봄의 기록" maxlength="20" oninput="updateSubtitleCount()">
+    <div class="char-count"><span id="subtitleCharCount">0</span> / 20</div>
   </div>
   <div class="cover-grid">
     <label class="cover-upload" id="frontUpload">
@@ -294,10 +299,12 @@
   const dd = String(today.getDate()).padStart(2, '0');
   document.getElementById('publishDate').textContent = `${yyyy}. ${mm}. ${dd}`;
 
-  // Title char count
-  document.getElementById('coverTitle').addEventListener('input', function() {
-    document.getElementById('titleCharCount').textContent = this.value.length;
-  });
+  function updateTitleCount() {
+    document.getElementById('titleCharCount').textContent = document.getElementById('coverTitle').value.length;
+  }
+  function updateSubtitleCount() {
+    document.getElementById('subtitleCharCount').textContent = document.getElementById('coverSubtitle').value.length;
+  }
 
   function goStep(n) {
     document.getElementById('step' + currentStep).classList.remove('active');
@@ -382,8 +389,10 @@
   }
 
   function updatePreview() {
-    const title = document.getElementById('coverTitle').value.trim() || '나의 작은 행복 일기';
-    document.getElementById('previewTitle').textContent = title;
+    const title = document.getElementById('coverTitle').value.trim();
+    const subtitle = document.getElementById('coverSubtitle').value.trim();
+    document.getElementById('previewTitle').textContent = title || '(제목 없음)';
+    document.getElementById('previewTitle').style.opacity = title ? '1' : '0.4';
     const inscription = document.getElementById('inscriptionText').value.trim();
     const name = document.getElementById('publisherName').value.trim();
     const date = document.getElementById('publishDate').textContent;
@@ -401,7 +410,8 @@
   function exportPDF() {
     const frontImg = document.querySelector('#previewFront img').src;
     const backImg = document.querySelector('#previewBack img').src;
-    const coverTitle = document.getElementById('coverTitle').value.trim() || '나의 작은 행복 일기';
+    const coverTitle = document.getElementById('coverTitle').value.trim();
+    const coverSubtitle = document.getElementById('coverSubtitle').value.trim();
     const inscription = document.getElementById('inscriptionText').value.trim();
     const pubName = document.getElementById('publisherName').value.trim() || '익명';
     const pubDate = document.getElementById('publishDate').textContent;
@@ -417,7 +427,14 @@
     ];
 
     let pages = '';
-    pages += `<div class="page page-cover"><img class="cover-img" src="${frontImg}"><div class="cover-overlay"></div><div class="cover-title">${coverTitle}</div></div>`;
+    let titleHtml = '';
+    if (coverTitle) titleHtml += coverTitle;
+    if (coverSubtitle) titleHtml += `<small>${coverSubtitle}</small>`;
+    if (titleHtml) {
+      pages += `<div class="page page-cover"><img class="cover-img" src="${frontImg}"><div class="cover-overlay"></div><div class="cover-title">${titleHtml}</div></div>`;
+    } else {
+      pages += `<div class="page page-cover"><img class="cover-img" src="${frontImg}"></div>`;
+    }
 
     if (inscription) {
       pages += `<div class="page page-inscription"><div class="st st-top"></div><div class="inscription-text">${inscription.replace(/\n/g,'<br>')}</div><div class="st st-bot"></div></div>`;
@@ -467,8 +484,9 @@
       .st-top { top:5mm; } .st-top::after { top:0.8mm; }
       .st-bot { bottom:5mm; } .st-bot::after { top:-1.1mm; }
       .cover-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-      .cover-overlay { position:absolute; inset:0; background:linear-gradient(180deg, rgba(255,251,240,0) 45%, rgba(255,251,240,0.6) 85%); }
-      .cover-title { position:relative; z-index:1; font-size:15pt; font-weight:bold; color:#433E34; text-align:center; margin-top:auto; margin-bottom:16mm; line-height:1.6; }
+      .cover-overlay { position:absolute; inset:0; background:linear-gradient(180deg, rgba(255,251,240,0) 55%, rgba(255,251,240,0.45) 90%); }
+      .cover-title { position:relative; z-index:1; font-size:13pt; font-weight:bold; color:#433E34; text-align:center; margin-top:auto; margin-bottom:12mm; line-height:1.6; }
+      .cover-title small { display:block; font-size:9pt; font-weight:normal; color:#928A79; margin-top:2mm; letter-spacing:0.3mm; }
       .photo { width:89mm; height:89mm; background:#F4EFE3; border-radius:1.5mm; margin-bottom:3mm; overflow:hidden; flex-shrink:0; }
       .photo img { width:100%; height:100%; object-fit:cover; }
       .dw { width:89mm; text-align:left; margin-bottom:2.5mm; }
