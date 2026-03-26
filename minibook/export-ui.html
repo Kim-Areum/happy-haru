@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>미니북 내보내기</title>
+<style>
+  @font-face { font-family: 'Ownglyph_PDH'; src: url('../fonts/Ownglyph_PDH.ttf') format('truetype'); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #FFFBF0; --bg-sub: #FAF6EB; --bg-subtle: #F4EFE3;
+    --fg: #322E26; --fg-mid: #6C6557; --fg-muted: #928A79; --fg-pale: #C3BAA7;
+    --line: #E7E0D1; --stitch: #D6CFBF;
+    --yellow: #FCF1D3; --yellow-border: #D4BD7F;
+    --blue: #B1C3D7; --pink: #DBB9B2;
+    --shadow: 0 2px 4px rgba(146,138,121,0.25);
+  }
+  body { font-family: 'Ownglyph_PDH', -apple-system, sans-serif; background: var(--bg); color: var(--fg); min-height: 100vh; }
+
+  /* Nav */
+  .nav { display: flex; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--line); }
+  .nav-back { font-size: 20px; color: var(--fg-mid); background: none; border: none; cursor: pointer; padding: 4px 8px; }
+  .nav-title { flex: 1; text-align: center; font-size: 17px; color: var(--fg); margin-right: 30px; }
+
+  /* Steps */
+  .step { display: none; padding: 24px 20px; }
+  .step.active { display: block; }
+  .step-indicator { display: flex; justify-content: center; gap: 8px; padding: 16px 0; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+  .dot.active { background: var(--fg-muted); }
+
+  /* Section */
+  .section-title { font-size: 15px; color: var(--fg); margin-bottom: 6px; }
+  .section-desc { font-size: 13px; color: var(--fg-muted); margin-bottom: 16px; }
+
+  /* Radio options */
+  .option-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .option {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; background: var(--bg); border: 1px solid var(--line);
+    border-radius: 12px; cursor: pointer; transition: border-color 0.2s;
+    position: relative;
+  }
+  .option::after { content: ''; position: absolute; inset: 3px; border: 1px dashed var(--stitch); border-radius: 9px; pointer-events: none; }
+  .option.selected { border-color: var(--yellow-border); background: var(--yellow); }
+  .option.selected::after { border-color: rgba(212,189,127,0.4); }
+  .option-radio { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--fg-pale); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .option.selected .option-radio { border-color: var(--yellow-border); }
+  .option.selected .option-radio::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--yellow-border); }
+  .option-text { font-size: 15px; color: var(--fg); }
+  .option-sub { font-size: 12px; color: var(--fg-muted); margin-top: 2px; }
+
+  /* Date inputs */
+  .date-row { display: flex; gap: 10px; align-items: center; margin-top: 12px; padding: 0 16px; }
+  .date-input { flex: 1; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; font-family: inherit; font-size: 14px; background: var(--bg); color: var(--fg); outline: none; }
+  .date-input:focus { border-color: var(--yellow-border); }
+  .date-sep { font-size: 13px; color: var(--fg-pale); }
+
+  /* Month picker */
+  .month-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; padding: 0 16px; }
+  .month-btn { padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); font-family: inherit; font-size: 14px; color: var(--fg); cursor: pointer; text-align: center; transition: all 0.15s; }
+  .month-btn.selected { background: var(--yellow); border-color: var(--yellow-border); }
+  .month-btn.disabled { color: var(--fg-pale); background: var(--bg-sub); border-color: var(--line); cursor: default; opacity: 0.5; }
+
+  /* Cover picker */
+  .cover-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .cover-item { aspect-ratio: 105/148; border-radius: 8px; overflow: hidden; border: 2px solid transparent; cursor: pointer; position: relative; }
+  .cover-item img { width: 100%; height: 100%; object-fit: cover; }
+  .cover-item.selected { border-color: var(--yellow-border); }
+  .cover-item.selected::before { content: '✓'; position: absolute; top: 6px; right: 6px; width: 20px; height: 20px; background: var(--yellow-border); color: white; border-radius: 50%; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+
+  /* Preview */
+  .preview-box { background: var(--bg-subtle); border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px; }
+  .preview-covers { display: flex; justify-content: center; gap: 12px; margin-bottom: 16px; }
+  .preview-cover { width: 70px; height: 98px; border-radius: 4px; overflow: hidden; box-shadow: var(--shadow); }
+  .preview-cover img { width: 100%; height: 100%; object-fit: cover; }
+  .preview-info { font-size: 13px; color: var(--fg-mid); line-height: 1.6; }
+  .preview-info strong { color: var(--fg); }
+
+  /* Bottom button */
+  .bottom-bar { padding: 16px 20px; }
+  .btn-next {
+    width: 100%; padding: 14px; border: none; border-radius: 22px;
+    font-family: inherit; font-size: 16px; cursor: pointer;
+    background: var(--blue); color: var(--fg); box-shadow: var(--shadow);
+    position: relative;
+  }
+  .btn-next::after { content: ''; position: absolute; inset: 3px; border: 1px dashed rgba(255,255,255,0.4); border-radius: 20px; pointer-events: none; }
+  .btn-next:disabled { background: var(--line); color: var(--fg-pale); box-shadow: none; }
+  .btn-next:disabled::after { display: none; }
+
+  .btn-export { background: var(--pink); }
+
+  /* Hidden extras */
+  .sub-options { display: none; }
+  .sub-options.show { display: block; }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <button class="nav-back" onclick="goBack()">‹</button>
+  <div class="nav-title">미니북 내보내기</div>
+</div>
+
+<div class="step-indicator">
+  <div class="dot active" id="dot1"></div>
+  <div class="dot" id="dot2"></div>
+  <div class="dot" id="dot3"></div>
+  <div class="dot" id="dot4"></div>
+</div>
+
+<!-- Step 1: 기간 선택 -->
+<div class="step active" id="step1">
+  <div class="section-title">기간 선택</div>
+  <div class="section-desc">미니북에 포함할 일기 기간을 선택하세요</div>
+  <div class="option-group">
+    <div class="option" onclick="selectPeriod('all', this)">
+      <div class="option-radio"></div>
+      <div>
+        <div class="option-text">전체</div>
+        <div class="option-sub">모든 일기를 포함합니다</div>
+      </div>
+    </div>
+    <div class="option" onclick="selectPeriod('range', this)">
+      <div class="option-radio"></div>
+      <div>
+        <div class="option-text">기간 지정</div>
+        <div class="option-sub">시작일과 종료일을 선택합니다</div>
+      </div>
+    </div>
+    <div class="sub-options" id="rangeOptions">
+      <div class="date-row">
+        <input type="date" class="date-input" id="startDate" value="2026-03-01">
+        <span class="date-sep">~</span>
+        <input type="date" class="date-input" id="endDate" value="2026-03-31">
+      </div>
+    </div>
+    <div class="option" onclick="selectPeriod('month', this)">
+      <div class="option-radio"></div>
+      <div>
+        <div class="option-text">월별 선택</div>
+        <div class="option-sub">특정 월의 일기를 포함합니다</div>
+      </div>
+    </div>
+    <div class="sub-options" id="monthOptions">
+      <div class="month-grid">
+        <button class="month-btn disabled" data-has="0">1월</button>
+        <button class="month-btn disabled" data-has="0">2월</button>
+        <button class="month-btn selected" data-has="18" onclick="toggleMonth(this)">3월</button>
+        <button class="month-btn disabled" data-has="0">4월</button>
+        <button class="month-btn disabled" data-has="0">5월</button>
+        <button class="month-btn disabled" data-has="0">6월</button>
+        <button class="month-btn disabled" data-has="0">7월</button>
+        <button class="month-btn disabled" data-has="0">8월</button>
+        <button class="month-btn disabled" data-has="0">9월</button>
+        <button class="month-btn disabled" data-has="0">10월</button>
+        <button class="month-btn disabled" data-has="0">11월</button>
+        <button class="month-btn disabled" data-has="0">12월</button>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <button class="btn-next" onclick="goStep(2)">다음</button>
+  </div>
+</div>
+
+<!-- Step 2: 앞표지 선택 -->
+<div class="step" id="step2">
+  <div class="section-title">앞표지 선택</div>
+  <div class="section-desc">미니북의 앞표지 이미지를 선택하세요</div>
+  <div class="cover-grid">
+    <div class="cover-item selected" onclick="selectCover('front', this)">
+      <img src="cover.png" alt="">
+    </div>
+    <div class="cover-item" onclick="selectCover('front', this)">
+      <img src="../haru-now/images/cherry.png" alt="">
+    </div>
+    <div class="cover-item" onclick="selectCover('front', this)">
+      <img src="../haru-now/images/reading.png" alt="">
+    </div>
+    <div class="cover-item" onclick="selectCover('front', this)">
+      <img src="../haru-now/images/flower.png" alt="">
+    </div>
+    <div class="cover-item" onclick="selectCover('front', this)">
+      <img src="../haru-now/images/coffee.png" alt="">
+    </div>
+    <div class="cover-item" onclick="selectCover('front', this)">
+      <img src="../haru-now/images/bookstore.png" alt="">
+    </div>
+  </div>
+  <div class="bottom-bar" style="margin-top:24px;">
+    <button class="btn-next" onclick="goStep(3)">다음</button>
+  </div>
+</div>
+
+<!-- Step 3: 뒷표지 선택 -->
+<div class="step" id="step3">
+  <div class="section-title">뒷표지 선택</div>
+  <div class="section-desc">미니북의 뒷표지 이미지를 선택하세요</div>
+  <div class="cover-grid">
+    <div class="cover-item selected" onclick="selectCover('back', this)">
+      <img src="back_cover.jpeg" alt="">
+    </div>
+    <div class="cover-item" onclick="selectCover('back', this)">
+      <img src="../haru-now/images/night_walk.png" alt="">
+    </div>
+    <div class="cover-item" onclick="selectCover('back', this)">
+      <img src="../haru-now/images/ventilate.png" alt="">
+    </div>
+    <div class="cover-item" onclick="selectCover('back', this)">
+      <img src="../haru-now/images/bath.png" alt="">
+    </div>
+    <div class="cover-item" onclick="selectCover('back', this)">
+      <img src="../haru-now/images/mug.png" alt="">
+    </div>
+    <div class="cover-item" onclick="selectCover('back', this)">
+      <img src="../haru-now/images/diary.png" alt="">
+    </div>
+  </div>
+  <div class="bottom-bar" style="margin-top:24px;">
+    <button class="btn-next" onclick="goStep(4)">다음</button>
+  </div>
+</div>
+
+<!-- Step 4: 미리보기 + 내보내기 -->
+<div class="step" id="step4">
+  <div class="section-title">미리보기</div>
+  <div class="section-desc">설정을 확인하고 PDF로 내보내세요</div>
+  <div class="preview-box">
+    <div class="preview-covers">
+      <div class="preview-cover" id="previewFront"><img src="cover.png" alt="앞표지"></div>
+      <div class="preview-cover" id="previewBack"><img src="back_cover.jpeg" alt="뒷표지"></div>
+    </div>
+    <div class="preview-info">
+      <strong>나의 작은 행복 일기</strong><br>
+      <span id="previewPeriod">2026년 3월</span><br>
+      <span id="previewCount">일기 6개</span>
+    </div>
+  </div>
+  <div class="option-group">
+    <div class="option selected" style="cursor:default;">
+      <div class="option-radio" style="border-color:var(--yellow-border);"><div style="width:10px;height:10px;border-radius:50%;background:var(--yellow-border);"></div></div>
+      <div>
+        <div class="option-text">A6 미니북</div>
+        <div class="option-sub">105 × 148mm · 재단 여백 3mm 포함</div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <button class="btn-next btn-export" onclick="exportPDF()">PDF 내보내기</button>
+  </div>
+</div>
+
+<script>
+  let currentStep = 1;
+  let selectedPeriod = 'all';
+
+  function goStep(n) {
+    document.getElementById('step' + currentStep).classList.remove('active');
+    document.getElementById('step' + n).classList.add('active');
+    for (let i = 1; i <= 4; i++) {
+      document.getElementById('dot' + i).classList.toggle('active', i <= n);
+    }
+    currentStep = n;
+  }
+
+  function goBack() {
+    if (currentStep > 1) goStep(currentStep - 1);
+  }
+
+  function selectPeriod(type, el) {
+    selectedPeriod = type;
+    el.closest('.option-group').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('rangeOptions').classList.toggle('show', type === 'range');
+    document.getElementById('monthOptions').classList.toggle('show', type === 'month');
+  }
+
+  function toggleMonth(btn) {
+    if (btn.classList.contains('disabled')) return;
+    btn.classList.toggle('selected');
+  }
+
+  function selectCover(type, el) {
+    el.parentElement.querySelectorAll('.cover-item').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    const img = el.querySelector('img').src;
+    if (type === 'front') document.querySelector('#previewFront img').src = img;
+    if (type === 'back') document.querySelector('#previewBack img').src = img;
+  }
+
+  function exportPDF() {
+    alert('PDF 생성 중...\n(실제 앱에서는 여기서 PDF가 생성되어 공유 시트가 열립니다)');
+  }
+</script>
+
+</body>
+</html>

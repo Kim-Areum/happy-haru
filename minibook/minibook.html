@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @page { size: 111mm 154mm; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Ownglyph_PDH', -apple-system, 'Apple SD Gothic Neo', sans-serif; color: #433E34; background: #D6CFBF; display: flex; flex-direction: column; align-items: center; padding: 5mm 0; }
+  @font-face { font-family: 'Ownglyph_PDH'; src: url('../fonts/Ownglyph_PDH.ttf') format('truetype'); }
+
+  .page {
+    width: 111mm; height: 154mm; background: #FFFBF0;
+    display: flex; flex-direction: column; align-items: center;
+    page-break-after: always; position: relative; padding: 7mm 8mm 8mm;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.18);
+    margin-bottom: 5mm;
+    flex-shrink: 0;
+  }
+  .page:last-child { margin-bottom: 5mm; }
+  .page-front { justify-content: center; }
+  .page-back { justify-content: flex-start; padding-top: 10mm; }
+  .page-text-only { justify-content: flex-start; padding-top: 10mm; }
+  .page-colophon { justify-content: flex-end; }
+  .page-cover { justify-content: flex-end; align-items: center; padding: 0; overflow: hidden; }
+
+  @media print {
+    body { background: white; padding: 0; }
+    .page { box-shadow: none; margin-bottom: 0; }
+  }
+
+  /* 스티치 (두 줄) */
+  .st { position: absolute; left: 8mm; right: 8mm; border-top: 0.3mm dashed #E7E0D1; }
+  .st::after { content: ''; position: absolute; left: 0; right: 0; border-top: 0.3mm dashed #E7E0D1; }
+  .st-top { top: 5mm; }
+  .st-top::after { top: 0.8mm; }
+  .st-bot { bottom: 5mm; }
+  .st-bot::after { top: -1.1mm; }
+
+  .page-num { position: absolute; bottom: 8.5mm; right: 9mm; font-size: 5pt; color: #C3BAA7; }
+
+  /* 표지 */
+  .cover-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .cover-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,251,240,0) 50%, rgba(255,251,240,0.6) 85%); }
+  .cover-title { position: relative; z-index: 1; font-size: 14pt; color: #433E34; text-align: center; margin-bottom: 18mm; line-height: 1.6; }
+  .cover-title small { display: block; font-size: 8pt; color: #928A79; margin-top: 2mm; letter-spacing: 0.3mm; }
+
+  /* 사진 */
+  .photo { width: 89mm; height: 89mm; background: #F4EFE3; border-radius: 1.5mm; margin-bottom: 3mm; overflow: hidden; flex-shrink: 0; }
+  .photo img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* 날짜 뱃지 */
+  .dw { width: 89mm; text-align: left; margin-bottom: 2.5mm; }
+  .db { display: inline-block; background: #FCF1D3; border: 0.3mm solid #D4BD7F; border-radius: 0.8mm; padding: 0.8mm 2.5mm; font-size: 6.5pt; font-weight: 500; color: #575144; position: relative; }
+  .db::after { content: ''; position: absolute; inset: 0.8mm; border: 0.2mm dashed rgba(212,189,127,0.4); border-radius: 0.3mm; }
+
+  /* 텍스트 */
+  .tf { width: 89mm; font-size: 9pt; line-height: 2.1; color: #433E34; text-align: left; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .tb { width: 89mm; font-size: 9pt; line-height: 2.1; color: #433E34; text-align: left; }
+
+  /* 발행 정보 */
+  .colophon { position: absolute; bottom: 10mm; left: 11mm; font-size: 8pt; color: #A59C8A; line-height: 2; text-align: left; }
+</style>
+</head>
+<body>
+
+<!-- 앞표지 -->
+<div class="page page-cover">
+  <img class="cover-img" src="cover.png" alt="">
+  <div class="cover-overlay"></div>
+  <div class="cover-title">나의 작은 행복 일기<small>2026. 3</small></div>
+</div>
+
+<!-- 일기 1 -->
+<div class="page page-front">
+  <div class="st st-top"></div>
+  <div class="photo"><img src="../haru-now/images/reading.png" alt=""></div>
+  <div class="dw"><span class="db">2026. 3. 12. 수</span></div>
+  <p class="tf">퇴근길에 하늘이 예뻐서 멈춰 섰다. 분홍빛이랑 보라빛이 섞인 하늘. 바람도 적당히 불어서 기분이 좋았다.</p>
+  <div class="st st-bot"></div>
+  <!-- page-num removed -->
+</div>
+
+<!-- 일기 2 앞면 -->
+<div class="page page-front">
+  <div class="st st-top"></div>
+  <div class="photo"><img src="../haru-now/images/coffee.png" alt=""></div>
+  <div class="dw"><span class="db">2026. 3. 13. 목</span></div>
+  <p class="tf">아침에 일어나서 커피를 내렸다. 원두를 갈 때 나는 소리가 좋다. 천천히 물을 부으면서 커피가 내려지는 걸 바라보고 있으면 마음이 차분해진다. 오늘은 좀 진하게 내렸는데, 한 모금 마시니까 눈이 번쩍 떠졌다. 창문 밖으로 햇살이 들어오고 있었다. 커피 한 잔이면 하루를 시작할 준비 완료. 이런 아침이 좋다.</p>
+  <div class="st st-bot"></div>
+  <!-- page-num removed -->
+</div>
+
+<!-- 일기 2 뒷면 -->
+<div class="page page-back">
+  <div class="st st-top"></div>
+  <p class="tb">아침에 일어나서 커피를 내렸다. 원두를 갈 때 나는 소리가 좋다. 천천히 물을 부으면서 커피가 내려지는 걸 바라보고 있으면 마음이 차분해진다. 오늘은 좀 진하게 내렸는데, 한 모금 마시니까 눈이 번쩍 떠졌다. 창문 밖으로 햇살이 들어오고 있었다. 커피 한 잔이면 하루를 시작할 준비 완료. 이런 아침이 좋다.</p>
+  <div class="st st-bot"></div>
+  <!-- page-num removed -->
+</div>
+
+<!-- 일기 3 텍스트만 -->
+<div class="page page-text-only">
+  <div class="st st-top"></div>
+  <div class="dw"><span class="db">2026. 3. 14. 금</span></div>
+  <p class="tb">오늘 스캐터북스에 갔다. 용기를 내서 지난번 쪽지에 대한 답장을 사장님께 부탁했다. 고마웠다고, 그 책 정말 좋았다고 짧게 적었다. 사장님이 꼭 전해주겠다며 웃으셨다.<br>마음을 주고받는 건 꼭 얼굴을 알아야만 할 수 있는 게 아닌 것 같다. 모르는 사이지만 책 한 권으로 이어진 이 인연이 참 따뜻하다.</p>
+  <div class="st st-bot"></div>
+  <!-- page-num removed -->
+</div>
+
+<!-- 일기 4 -->
+<div class="page page-front">
+  <div class="st st-top"></div>
+  <div class="photo"><img src="../haru-now/images/cherry.png" alt=""></div>
+  <div class="dw"><span class="db">2026. 3. 15. 토</span></div>
+  <p class="tf">밤에 산책하다가 벚꽃을 봤다. 가로등 불빛 아래 벚꽃이 은은하게 빛나고 있었다. 낮에 보는 벚꽃이랑 또 다른 느낌. 혼자 보기 아까워서 사진을 찍었다.</p>
+  <div class="st st-bot"></div>
+  <!-- page-num removed -->
+</div>
+
+<!-- 일기 5 앞면 -->
+<div class="page page-front">
+  <div class="st st-top"></div>
+  <div class="photo"><img src="../haru-now/images/flower.png" alt=""></div>
+  <div class="dw"><span class="db">2026. 3. 16. 일</span></div>
+  <p class="tf">꽃집에 들렀다. 작은 꽃다발을 하나 샀다. 노란 프리지아랑 하얀 데이지가 섞인 거. 집에 와서 유리병에 꽂아뒀더니 방 안이 환해졌다. 꽃 하나로 이렇게 기분이 달라지다니. 앞으로 종종 사야겠다. 나를 위한 작은 선물.</p>
+  <div class="st st-bot"></div>
+  <!-- page-num removed -->
+</div>
+
+<!-- 일기 5 뒷면 -->
+<div class="page page-back">
+  <div class="st st-top"></div>
+  <p class="tb">꽃집에 들렀다. 작은 꽃다발을 하나 샀다. 노란 프리지아랑 하얀 데이지가 섞인 거. 집에 와서 유리병에 꽂아뒀더니 방 안이 환해졌다. 꽃 하나로 이렇게 기분이 달라지다니. 앞으로 종종 사야겠다. 나를 위한 작은 선물.</p>
+  <div class="st st-bot"></div>
+  <!-- page-num removed -->
+</div>
+
+<!-- 일기 6 텍스트만 -->
+<div class="page page-text-only">
+  <div class="st st-top"></div>
+  <div class="dw"><span class="db">2026. 3. 17. 월</span></div>
+  <p class="tb">오늘은 리아를 만났다. 오랜만에 리아 작업실에서 같이 그림을 그렸다. 큰 캔버스에 각자 좋아하는 색을 칠했다. 리아는 역시 색 감각이 남다르다. 나는 그냥 느낌대로 칠했는데, 리아가 예쁘다고 해줬다.<br>그림을 그리면서 이런저런 이야기를 나눴다. 요즘 읽고 있는 책 이야기, 고등어 밴드 새 앨범 이야기. 리아 덕분에 알게 된 것들이 참 많다. 좋아하는 걸 함께 나눌 수 있는 친구가 있다는 게 얼마나 큰 행복인지.</p>
+  <div class="st st-bot"></div>
+  <!-- page-num removed -->
+</div>
+
+<!-- 뒷표지 -->
+<div class="page page-cover">
+  <img class="cover-img" src="back_cover.jpeg" alt="">
+</div>
+
+</body>
+</html>
