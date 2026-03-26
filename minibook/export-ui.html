@@ -429,8 +429,8 @@
     let pages = '';
     let titleHtml = '';
     if (coverTitle) titleHtml += coverTitle;
-    if (coverSubtitle) titleHtml += `<small>${coverSubtitle}</small>`;
-    if (titleHtml) {
+    titleHtml += `<small>${coverSubtitle || '&nbsp;'}</small>`;
+    if (coverTitle || coverSubtitle) {
       pages += `<div class="page page-cover"><img class="cover-img" src="${frontImg}"><div class="cover-overlay"></div><div class="cover-title">${titleHtml}</div></div>`;
     } else {
       pages += `<div class="page page-cover"><img class="cover-img" src="${frontImg}"></div>`;
