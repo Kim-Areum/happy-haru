@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @page { size: 200.3mm 138mm; margin: 0; }
+  @font-face { font-family: 'Ownglyph_PDH'; src: url('../fonts/Ownglyph_PDH.ttf') format('truetype'); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Ownglyph_PDH', -apple-system, sans-serif; background: #D6CFBF; display: flex; flex-direction: column; align-items: center; gap: 10mm; padding: 10mm 0; }
+
+  .cover-spread {
+    width: 200.3mm;
+    height: 138mm;
+    display: flex;
+    position: relative;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+
+  /* 뒷표지 (왼쪽) */
+  .back-cover {
+    width: 97mm;
+    height: 138mm;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .back-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* 책등 (가운데) */
+  .spine {
+    width: 6.3mm;
+    height: 138mm;
+    background: #FFFBF0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .spine-text {
+    writing-mode: vertical-rl;
+    font-size: 6pt;
+    color: #928A79;
+    letter-spacing: 0.5mm;
+  }
+
+  /* 앞표지 (오른쪽) */
+  .front-cover {
+    width: 97mm;
+    height: 138mm;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .front-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .front-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,251,240,0) 65%, rgba(255,251,240,0.35) 92%);
+  }
+  .front-title {
+    position: absolute;
+    bottom: 7mm;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 12pt;
+    color: #433E34;
+    line-height: 1.6;
+    z-index: 1;
+  }
+  .front-title small {
+    display: block;
+    font-size: 9pt;
+    color: #575144;
+    margin-top: 1mm;
+  }
+
+  /* 안쪽면 */
+  .inner-spread {
+    width: 200.3mm;
+    height: 138mm;
+    display: flex;
+    position: relative;
+    background: #FFFBF0;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    page-break-before: always;
+  }
+  .inner-left {
+    width: 97mm;
+    height: 138mm;
+    background: #FFFBF0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    flex-shrink: 0;
+    padding: 12mm;
+  }
+  .inscription {
+    font-size: 9pt;
+    line-height: 2.2;
+    color: #928A79;
+    text-align: left;
+  }
+  .inner-spine {
+    width: 6.3mm;
+    height: 138mm;
+    background: #FFFBF0;
+    flex-shrink: 0;
+  }
+  .inner-right {
+    width: 97mm;
+    height: 138mm;
+    background: #FFFBF0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 12mm;
+    flex-shrink: 0;
+  }
+  .colophon {
+    font-size: 7pt;
+    color: #A59C8A;
+    line-height: 2;
+    text-align: left;
+  }
+  .logo-mark {
+    margin-top: 2mm;
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+  }
+  .logo-mark img {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  @media print {
+    body { background: white; }
+    .cover-spread, .inner-spread { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cover-spread">
+  <!-- 뒷표지 (왼쪽) -->
+  <div class="back-cover">
+    <img src="covers/back/01_ep15_starry.png" alt="">
+  </div>
+
+  <!-- 책등 -->
+  <div class="spine">
+    <div class="spine-text">나의 작은 행복 일기</div>
+  </div>
+
+  <!-- 앞표지 (오른쪽) -->
+  <div class="front-cover">
+    <img src="covers/front/01_ep02_traffic.png" alt="">
+    <div class="front-overlay"></div>
+    <div class="front-title">
+      나의 작은 행복 일기
+      <small>&nbsp;</small>
+    </div>
+  </div>
+</div>
+
+<!-- 2페이지: 안쪽면 (앞표지 안쪽 + 책등 + 뒷표지 안쪽) -->
+<div class="inner-spread">
+  <!-- 앞표지 안쪽 (오른쪽에 인쇄되므로 왼쪽에 배치) -->
+  <div class="inner-left">
+    <div class="inscription">나에게 보내는 작은 편지...</div>
+  </div>
+
+  <!-- 책등 안쪽 -->
+  <div class="inner-spine"></div>
+
+  <!-- 뒷표지 안쪽 (왼쪽에 인쇄되므로 오른쪽에 배치) -->
+  <div class="inner-right">
+    <div class="colophon">
+      발행인 김아름<br>
+      발행일 2026. 03. 27
+      <div class="logo-mark">
+        <img src="../images/appicon.png" alt="">Happy Haru
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
