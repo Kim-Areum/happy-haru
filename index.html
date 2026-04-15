@@ -1049,11 +1049,14 @@
     dots.forEach((d, i) => d.classList.toggle('active', i === closest));
   });
 
-  // Auto-play videos when visible
+  // Auto-play videos when visible + 글로벌 음소거 상태
+  let globalMuted = true;
   const videos = document.querySelectorAll('.episode-video');
   const videoObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
+        entry.target.currentTime = 0;
+        entry.target.muted = globalMuted;
         entry.target.play().catch(() => {});
       } else {
         entry.target.pause();
@@ -1063,7 +1066,8 @@
   videos.forEach(v => {
     videoObserver.observe(v);
     v.addEventListener('click', () => {
-      v.muted = !v.muted;
+      globalMuted = !globalMuted;
+      videos.forEach(vid => vid.muted = globalMuted);
     });
   });
 
